@@ -740,7 +740,7 @@
         const SUPABASE_KEY = 'sb_publishable_PolGhxMIQmuTXtkbWbVvBg_1CaeVni9';
         
         let supabaseClient = null;
-        if (SUPABASE_URL !== 'https://xkkelzeeiiiqtpsvntgi.supabase.co' && SUPABASE_KEY !== 'sb_publishable_PolGhxMIQmuTXtkbWbVvBg_1CaeVni9') {
+        if (SUPABASE_URL && SUPABASE_KEY) {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
