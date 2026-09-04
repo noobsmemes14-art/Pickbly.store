@@ -205,7 +205,7 @@
                 <div id="desktopSearchWrapper" class="neon-search-container">
                     <form onsubmit="event.preventDefault(); askPixblyAgent('desktopSearchInput');" class="relative flex items-center bg-white rounded-[16px] p-1.5 transition-all">
                         
-                        <select class="bg-gray-50 hover:bg-gray-100 text-xs font-bold text-gray-700 px-3 py-2.5 outline-none cursor-pointer border-r border-gray-200 rounded-l-custom transition-colors shrink-0">
+                        <select id="desktopCategorySelect" onchange="filterByCategory(this.value)" class="bg-gray-50 hover:bg-gray-100 text-xs font-bold text-gray-700 px-3 py-2.5 outline-none cursor-pointer border-r border-gray-200 rounded-l-custom transition-colors shrink-0">
                             <option value="all">All Apparel</option>
                             <option value="men">Men's Wear</option>
                             <option value="women">Women's Wear</option>
@@ -217,7 +217,7 @@
                                 <span>Search "<span id="placeholderText" class="font-semibold text-gray-600">Red Linen Shirts</span>" near you...</span>
                             </div>
 
-                            <input type="text" id="desktopSearchInput" autocomplete="off" class="w-full bg-transparent px-4 py-2 text-sm text-gray-800 outline-none z-10 font-medium">
+                            <input type="text" id="desktopSearchInput" onfocus="showDropdown()" onblur="hideDropdown()" oninput="handleInput(this)" autocomplete="off" class="w-full bg-transparent px-4 py-2 text-sm text-gray-800 outline-none z-10 font-medium">
                         </div>
 
                         <button type="button" id="micBtn" onclick="toggleVoiceSearch('desktopSearchInput', 'micBtn')" title="Search with Voice" class="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-forest hover:bg-gray-100 transition-all mr-1 shrink-0">
@@ -235,9 +235,9 @@
                         <div>
                             <div class="flex justify-between items-center text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                                 <span><i class="fa-solid fa-clock-rotate-left mr-1"></i> Recent Clothing Searches</span>
-                                <button type="button" class="hover:text-red-500 text-[10px]">Clear</button>
+                                <button type="button" onclick="clearRecentSearches()" class="hover:text-red-500 text-[10px]">Clear</button>
                             </div>
-                            <div class="flex flex-wrap gap-2">
+                            <div id="recentSearchesList" class="flex flex-wrap gap-2">
                                 <span onclick="applySearch('Linen Shirts Maharagama')" class="text-xs bg-gray-100 hover:bg-forest hover:text-white px-3 py-1.5 rounded-full cursor-pointer transition-all text-gray-700 font-medium"><i class="fa-solid fa-magnifying-glass text-[10px] mr-1 opacity-50"></i> Linen Shirts Maharagama</span>
                                 <span onclick="applySearch('Oversized Hoodies')" class="text-xs bg-gray-100 hover:bg-forest hover:text-white px-3 py-1.5 rounded-full cursor-pointer transition-all text-gray-700 font-medium"><i class="fa-solid fa-magnifying-glass text-[10px] mr-1 opacity-50"></i> Oversized Hoodies</span>
                             </div>
@@ -277,7 +277,7 @@
         <div class="px-4 pb-4 md:hidden">
             <div id="mobileSearchWrapper" class="neon-search-container">
                 <form onsubmit="event.preventDefault(); askPixblyAgent('mobileSearchInput');" class="relative flex items-center bg-white rounded-[16px] p-1">
-                    <select class="bg-gray-50 text-xs font-bold text-gray-700 px-2 py-2 outline-none border-r border-gray-200 rounded-l-custom">
+                    <select id="mobileCategorySelect" onchange="filterByCategory(this.value)" class="bg-gray-50 text-xs font-bold text-gray-700 px-2 py-2 outline-none border-r border-gray-200 rounded-l-custom">
                         <option value="all">All</option>
                         <option value="men">Men</option>
                         <option value="women">Women</option>
@@ -340,10 +340,10 @@
                 <div class="py-6 space-y-4">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Clothing Categories</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-shirt w-5 text-center text-forest"></i> T-Shirts & Tops</a></li>
-                        <li><a href="#" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-person-dress w-5 text-center text-forest"></i> Dresses & Skirts</a></li>
-                        <li><a href="#" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-socks w-5 text-center text-forest"></i> Denim & Pants</a></li>
-                        <li><a href="#" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-user-tie w-5 text-center text-forest"></i> Formal & Office Wear</a></li>
+                        <li><a href="#" onclick="filterByCategory('T-Shirts'); toggleDrawer(); return false;" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-shirt w-5 text-center text-forest"></i> T-Shirts & Tops</a></li>
+                        <li><a href="#" onclick="filterByCategory('Dresses'); toggleDrawer(); return false;" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-person-dress w-5 text-center text-forest"></i> Dresses & Skirts</a></li>
+                        <li><a href="#" onclick="filterByCategory('Jeans'); toggleDrawer(); return false;" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-socks w-5 text-center text-forest"></i> Denim & Pants</a></li>
+                        <li><a href="#" onclick="filterByCategory('Formal'); toggleDrawer(); return false;" class="flex items-center gap-3 p-2.5 rounded-custom text-gray-700 hover:bg-forest/5 hover:text-forest transition-all font-medium"><i class="fa-solid fa-user-tie w-5 text-center text-forest"></i> Formal & Office Wear</a></li>
                     </ul>
                 </div>
             </div>
@@ -513,23 +513,23 @@
         <section class="space-y-4">
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Explore Clothing Categories</h2>
             
-            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-                <button class="flex items-center gap-2 bg-forest text-yellowAccent px-5 py-3 rounded-full text-sm font-bold shadow-sm flex-shrink-0">
+            <div id="categoryBtnContainer" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+                <button onclick="filterByCategory('all')" class="cat-btn flex items-center gap-2 bg-forest text-yellowAccent px-5 py-3 rounded-full text-sm font-bold shadow-sm flex-shrink-0">
                     <i class="fa-solid fa-border-all"></i> All Apparel
                 </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
+                <button onclick="filterByCategory('T-Shirts')" class="cat-btn flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
                     <i class="fa-solid fa-shirt text-forest"></i> T-Shirts
                 </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
+                <button onclick="filterByCategory('Dresses')" class="cat-btn flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
                     <i class="fa-solid fa-person-dress text-forest"></i> Dresses
                 </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
+                <button onclick="filterByCategory('Jeans')" class="cat-btn flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
                     <i class="fa-solid fa-socks text-forest"></i> Jeans & Trousers
                 </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
+                <button onclick="filterByCategory('Formal')" class="cat-btn flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
                     <i class="fa-solid fa-user-tie text-forest"></i> Formal Wear
                 </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
+                <button onclick="filterByCategory('Jackets')" class="cat-btn flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
                     <i class="fa-solid fa-vest text-forest"></i> Jackets & Hoodies
                 </button>
             </div>
@@ -744,6 +744,9 @@
     <script>
         const SUPABASE_URL = 'https://xkkelzeeiiiqtpsvntgi.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_PolGhxMIQmuTXtkbWbVvBg_1CaeVni9';
+        
+        // 🔑 Enter your Gemini API Key here
+        const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
 
         let supabaseClient = null;
         if (SUPABASE_URL && SUPABASE_KEY) {
@@ -872,6 +875,9 @@
 
             if (!userQuery) return;
 
+            // Save to recent searches
+            saveRecentSearch(userQuery);
+
             const responseBox = document.getElementById('aiResponseBox');
             const responseText = document.getElementById('aiResponseText');
             
@@ -885,12 +891,52 @@
                     contextProducts = data || [];
                 }
 
-                // Filtering directly on context or calling backend proxy endpoint
-                const queryLower = userQuery.toLowerCase();
-                const matchedKeywords = queryLower.split(' ').filter(w => w.length > 2);
+                if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+                    responseText.innerText = `Here are the top matches for "${userQuery}"!`;
+                    filterProductsUI([userQuery], userQuery);
+                    return;
+                }
+
+                const prompt = `
+                You are Pixbly AI, a friendly local fashion shopping agent in Sri Lanka.
+                The user asked: "${userQuery}".
+                Here is our available inventory (JSON): ${JSON.stringify(contextProducts)}.
+
+                Please provide a response in valid JSON format only without Markdown formatting:
+                {
+                   "agent_reply": "A natural, friendly response as a fashion assistant.",
+                   "matched_keywords": ["keyword1", "keyword2"],
+                   "max_price": null
+                }
+                `;
+
+                const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const aiData = await aiResponse.json();
                 
-                responseText.innerText = `Here are the best matches for "${userQuery}"!`;
-                filterProductsUI(matchedKeywords, userQuery);
+                if (!aiResponse.ok || !aiData.candidates || !aiData.candidates[0]) {
+                    throw new Error('Gemini API Error');
+                }
+
+                const rawText = aiData.candidates[0].content.parts[0].text;
+                
+                let parsedResult = {};
+                try {
+                    const cleanedJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    parsedResult = JSON.parse(cleanedJson);
+                } catch(e) {
+                    parsedResult = { agent_reply: rawText, matched_keywords: [userQuery.toLowerCase()] };
+                }
+
+                responseText.innerText = parsedResult.agent_reply || `Here are the best matches for "${userQuery}"!`;
+
+                filterProductsUI(parsedResult.matched_keywords || [], userQuery);
 
                 document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
 
@@ -905,17 +951,133 @@
             document.getElementById('productsHeading').innerText = `AI Results for: "${rawQuery}"`;
             document.getElementById('productsSubHeading').innerText = "Filtered dynamically by Pixbly AI Agent";
 
-            if (!supabaseClient) return;
-
-            let query = supabaseClient.from('products').select('*');
-
-            if (keywords.length > 0) {
-                const keywordFilter = keywords.map(k => `title.ilike.%${k}%,description.ilike.%${k}%`).join(',');
-                query = query.or(keywordFilter);
+            if (!supabaseClient) {
+                renderFallbackProducts();
+                return;
             }
 
-            const { data: filteredProducts } = await query;
-            renderProductCards(filteredProducts || []);
+            try {
+                let query = supabaseClient.from('products').select('*');
+
+                if (keywords && keywords.length > 0) {
+                    const keywordFilter = keywords.map(k => `title.ilike.%${k}%,description.ilike.%${k}%`).join(',');
+                    query = query.or(keywordFilter);
+                }
+
+                const { data: filteredProducts, error } = await query;
+                if (error || !filteredProducts || filteredProducts.length === 0) {
+                    renderProductCards([]);
+                } else {
+                    renderProductCards(filteredProducts);
+                }
+            } catch(e) {
+                renderFallbackProducts();
+            }
+        }
+
+        async function filterByCategory(category) {
+            const heading = document.getElementById('productsHeading');
+            const subHeading = document.getElementById('productsSubHeading');
+            
+            // Sync category dropdowns
+            const dSelect = document.getElementById('desktopCategorySelect');
+            const mSelect = document.getElementById('mobileCategorySelect');
+            if (dSelect) dSelect.value = category === 'T-Shirts' || category === 'Formal' || category === 'Jeans' ? 'men' : category.toLowerCase();
+            if (mSelect) mSelect.value = dSelect.value;
+
+            // Update UI buttons styling
+            const buttons = document.querySelectorAll('.cat-btn');
+            buttons.forEach(btn => {
+                if (btn.innerText.toLowerCase().includes(category.toLowerCase()) || (category === 'all' && btn.innerText.includes('All Apparel'))) {
+                    btn.className = 'cat-btn flex items-center gap-2 bg-forest text-yellowAccent px-5 py-3 rounded-full text-sm font-bold shadow-sm flex-shrink-0';
+                } else {
+                    btn.className = 'cat-btn flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0';
+                }
+            });
+
+            if (category === 'all') {
+                fetchProducts();
+                return;
+            }
+
+            heading.innerText = `${category} Collection`;
+            subHeading.innerText = `Showing all local items in ${category}`;
+
+            if (!supabaseClient) {
+                renderFallbackProducts();
+                return;
+            }
+
+            try {
+                const { data: products } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .or(`title.ilike.%${category}%,description.ilike.%${category}%`);
+
+                renderProductCards(products || []);
+                document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+            } catch(e) {
+                renderFallbackProducts();
+            }
+        }
+
+        /* ---------------------------------------------------- */
+        /*            SEARCH DROPDOWN & RECENT SEARCHES        */
+        /* ---------------------------------------------------- */
+        let hideDropdownTimeout;
+
+        function showDropdown() {
+            clearTimeout(hideDropdownTimeout);
+            const dropdown = document.getElementById('searchDropdown');
+            if (dropdown) dropdown.classList.remove('hidden');
+        }
+
+        function hideDropdown() {
+            hideDropdownTimeout = setTimeout(() => {
+                const dropdown = document.getElementById('searchDropdown');
+                if (dropdown) dropdown.classList.add('hidden');
+            }, 250);
+        }
+
+        function handleInput(input) {
+            const placeholder = document.getElementById('searchPlaceholder');
+            if (placeholder) {
+                if (input.value.trim().length > 0) {
+                    placeholder.style.opacity = '0';
+                } else {
+                    placeholder.style.opacity = '1';
+                }
+            }
+        }
+
+        function saveRecentSearch(term) {
+            if (!term) return;
+            let searches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+            searches = searches.filter(s => s.toLowerCase() !== term.toLowerCase());
+            searches.unshift(term);
+            if (searches.length > 5) searches.pop();
+            localStorage.setItem('recentSearches', JSON.stringify(searches));
+            loadRecentSearches();
+        }
+
+        function loadRecentSearches() {
+            const listContainer = document.getElementById('recentSearchesList');
+            if (!listContainer) return;
+            const searches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+            if (searches.length === 0) {
+                listContainer.innerHTML = `<span class="text-xs text-gray-400">No recent searches</span>`;
+                return;
+            }
+            listContainer.innerHTML = searches.map(s => `
+                <span onclick="applySearch('${s}')" class="text-xs bg-gray-100 hover:bg-forest hover:text-white px-3 py-1.5 rounded-full cursor-pointer transition-all text-gray-700 font-medium flex items-center gap-1">
+                    <i class="fa-solid fa-magnifying-glass text-[10px] opacity-50"></i> ${s}
+                </span>
+            `).join('');
+        }
+
+        function clearRecentSearches() {
+            localStorage.removeItem('recentSearches');
+            loadRecentSearches();
         }
 
         function toggleDrawer() {
@@ -930,8 +1092,9 @@
 
         function applySearch(term) {
             document.getElementById('desktopSearchInput').value = term;
-            document.getElementById('searchPlaceholder').style.opacity = '0';
-            document.getElementById('searchDropdown').classList.add('hidden');
+            handleInput(document.getElementById('desktopSearchInput'));
+            const dropdown = document.getElementById('searchDropdown');
+            if (dropdown) dropdown.classList.add('hidden');
             askPixblyAgent('desktopSearchInput');
         }
 
@@ -985,6 +1148,7 @@
             initBubbles();
             fetchProducts();
             fetchStoresFromSupabase();
+            loadRecentSearches();
         });
 
         function initBubbles() {
@@ -1015,7 +1179,7 @@
                     this.alpha = Math.random() * 0.4 + 0.3;
                     this.color = Math.random() > 0.4 ? '#FAEA73' : '#34D399';
                 }
-                update(mouse) {
+                update() {
                     this.x += this.vx;
                     this.y += this.vy;
                     if (this.x < 0 || this.x > width) this.vx *= -1;
@@ -1036,7 +1200,7 @@
 
             function animate() {
                 ctx.clearRect(0, 0, width, height);
-                bubbles.forEach(b => { b.update({x:null,y:null}); b.draw(); });
+                bubbles.forEach(b => { b.update(); b.draw(); });
                 requestAnimationFrame(animate);
             }
             animate();
@@ -1054,11 +1218,11 @@
         const placeholderContainer = document.getElementById('searchPlaceholder');
 
         setInterval(() => {
-            if (placeholderContainer) {
+            if (placeholderContainer && placeholderContainer.style.opacity !== '0') {
                 placeholderContainer.classList.add('slide-up');
                 setTimeout(() => {
                     exampleIndex = (exampleIndex + 1) % searchExamples.length;
-                    placeholderTextElem.innerText = searchExamples[exampleIndex];
+                    if (placeholderTextElem) placeholderTextElem.innerText = searchExamples[exampleIndex];
                     placeholderContainer.classList.remove('slide-up');
                 }, 350);
             }
@@ -1081,6 +1245,7 @@
             recognition.onresult = (e) => {
                 inputElem.value = e.results[0][0].transcript;
                 btnElem.classList.remove('mic-listening');
+                handleInput(inputElem);
                 askPixblyAgent(inputId);
             };
             recognition.onerror = () => btnElem.classList.remove('mic-listening');
