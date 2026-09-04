@@ -197,6 +197,8 @@
             50% { opacity: 0; }
         }
     </style>
+
+    <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-appBg text-gray-800 font-sans antialiased min-h-screen flex flex-col selection:bg-yellowAccent selection:text-forest">
@@ -546,6 +548,7 @@
             </div>
         </section>
 
+        <!-- DYNAMIC PRODUCTS SECTION (Loaded from Supabase) -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -555,101 +558,11 @@
                 <a href="#" class="text-sm font-bold text-forest hover:text-forest-light flex items-center gap-1">See All <i class="fa-solid fa-arrow-right text-xs"></i></a>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
-                    <div class="relative aspect-square overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
-                            Urban Wear
-                        </span>
-                    </div>
-                    <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">Minimalist Cotton Crewneck T-Shirt</h3>
-                            <p class="text-xs text-gray-400 mt-0.5">Size M • In Stock</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <div>
-                                <span class="text-xs text-gray-400 block line-through">3,200 LKR</span>
-                                <span class="text-sm sm:text-base font-extrabold text-forest">2,450 LKR</span>
-                            </div>
-                            <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
-                                <span>Pick It</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
-                    <div class="relative aspect-square overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=80" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
-                            Vogue Local
-                        </span>
-                    </div>
-                    <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">Summer Floral Maxi Dress</h3>
-                            <p class="text-xs text-gray-400 mt-0.5">Yellow Floral • Size S/M</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <div>
-                                <span class="text-xs text-gray-400 block line-through">5,500 LKR</span>
-                                <span class="text-sm sm:text-base font-extrabold text-forest">4,200 LKR</span>
-                            </div>
-                            <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
-                                <span>Pick It</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
-                    <div class="relative aspect-square overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=80" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
-                            Denim Studio
-                        </span>
-                    </div>
-                    <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">Slim Fit Denim Jeans</h3>
-                            <p class="text-xs text-gray-400 mt-0.5">Classic Blue • Size 32</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <div>
-                                <span class="text-xs text-gray-400 block line-through">6,800 LKR</span>
-                                <span class="text-sm sm:text-base font-extrabold text-forest">5,500 LKR</span>
-                            </div>
-                            <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
-                                <span>Pick It</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
-                    <div class="relative aspect-square overflow-hidden bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&auto=format&fit=crop&q=80" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
-                            Aura Studio
-                        </span>
-                    </div>
-                    <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">Casual Linen Button Shirt</h3>
-                            <p class="text-xs text-gray-400 mt-0.5">Forest Green • Size M</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <div>
-                                <span class="text-xs text-gray-400 block line-through">4,500 LKR</span>
-                                <span class="text-sm sm:text-base font-extrabold text-forest">3,800 LKR</span>
-                            </div>
-                            <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
-                                <span>Pick It</span>
-                            </button>
-                        </div>
-                    </div>
+            <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Products will be rendered dynamically via Supabase JS -->
+                <div class="col-span-full text-center py-8 text-gray-400 font-medium">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-forest"></i>
+                    <p>Loading items from Supabase...</p>
                 </div>
             </div>
         </section>
@@ -845,7 +758,105 @@
         </div>
     </footer>
 
-    <!-- INTERACTIVE SCRIPT IMPLEMENTATION -->
+    <!-- SUPABASE CONFIGURATION & DYNAMIC PRODUCT RENDER SCRIPT -->
+    <script>
+        // Supabase Initialization (Replace placeholders with your actual keys locally)
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        let supabaseClient = null;
+        if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+
+        // Fetch products from Supabase
+        async function fetchProducts() {
+            const grid = document.getElementById('productsGrid');
+            if (!supabaseClient) {
+                // Fallback mock UI if keys are not set yet
+                renderFallbackProducts();
+                return;
+            }
+
+            try {
+                const { data: products, error } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error || !products || products.length === 0) {
+                    renderFallbackProducts();
+                    return;
+                }
+
+                grid.innerHTML = products.map(product => `
+                    <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
+                        <div class="relative aspect-square overflow-hidden bg-gray-100">
+                            <img src="${product.image_url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80'}" alt="${product.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
+                                ${product.store_name}
+                            </span>
+                        </div>
+                        <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">${product.title}</h3>
+                                <p class="text-xs text-gray-400 mt-0.5">${product.location || 'Local Store'}</p>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-gray-50">
+                                <div>
+                                    <span class="text-sm sm:text-base font-extrabold text-forest">${Number(product.price).toLocaleString()} LKR</span>
+                                </div>
+                                <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
+                                    <span>Pick It</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading Supabase products:', err);
+                renderFallbackProducts();
+            }
+        }
+
+        function renderFallbackProducts() {
+            const grid = document.getElementById('productsGrid');
+            const sampleProducts = [
+                { title: 'Minimalist Cotton Crewneck T-Shirt', store: 'Urban Wear', price: '2,450', oldPrice: '3,200', size: 'Size M • In Stock', img: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80' },
+                { title: 'Summer Floral Maxi Dress', store: 'Vogue Local', price: '4,200', oldPrice: '5,500', size: 'Yellow Floral • Size S/M', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=80' },
+                { title: 'Slim Fit Denim Jeans', store: 'Denim Studio', price: '5,500', oldPrice: '6,800', size: 'Classic Blue • Size 32', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=80' },
+                { title: 'Casual Linen Button Shirt', store: 'Aura Studio', price: '3,800', oldPrice: '4,500', size: 'Forest Green • Size M', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&auto=format&fit=crop&q=80' }
+            ];
+
+            grid.innerHTML = sampleProducts.map(item => `
+                <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
+                    <div class="relative aspect-square overflow-hidden bg-gray-100">
+                        <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
+                            ${item.store}
+                        </span>
+                    </div>
+                    <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">${item.title}</h3>
+                            <p class="text-xs text-gray-400 mt-0.5">${item.size}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-50">
+                            <div>
+                                <span class="text-xs text-gray-400 block line-through">${item.oldPrice} LKR</span>
+                                <span class="text-sm sm:text-base font-extrabold text-forest">${item.price} LKR</span>
+                            </div>
+                            <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
+                                <span>Pick It</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+
+    <!-- INTERACTIVE UI SCRIPT IMPLEMENTATION -->
     <script>
         function toggleDrawer() {
             const drawer = document.getElementById('sideDrawer');
@@ -906,6 +917,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(typeEffect, 500);
             initBubbles();
+            fetchProducts();
         });
 
         /* Interactive 3D Canvas Bubbles with Cursor Avoidance */
