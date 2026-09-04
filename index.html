@@ -448,7 +448,24 @@
                 <a href="#" class="text-sm font-bold text-forest hover:text-forest-light flex items-center gap-1 transition-all">View All <i class="fa-solid fa-arrow-right text-xs"></i></a>
             </div>
 
-            <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div id="storesContainer" class="flex gap-4 overflow-x-auto no-scrollbar pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+                <!-- FEATURED STORE: PERRI ALLEN -->
+                <a href="store.html?slug=perriallenstore" class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border-2 border-emerald-500/80 shadow-sm hover:shadow-md transition-all group cursor-pointer flex-shrink-0 relative overflow-hidden">
+                    <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-bl-lg">Verified</span>
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 rounded-custom border border-emerald-100 bg-emerald-50 flex items-center justify-center font-black text-forest text-xl group-hover:scale-105 transition-transform shrink-0">
+                            PA
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-forest transition-colors">Perri Allen Store</h3>
+                            <p class="text-xs text-emerald-600 font-semibold"><i class="fa-solid fa-location-dot text-[10px]"></i> Local Merchant</p>
+                            <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-bold">
+                                <i class="fa-solid fa-star"></i> 5.0 <span class="text-gray-400 font-normal">(New Store)</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
                 <div class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all group cursor-pointer flex-shrink-0">
                     <div class="flex items-center gap-3">
                         <img src="https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=100&auto=format&fit=crop&q=80" alt="Logo" class="w-14 h-14 rounded-custom object-cover border border-gray-100 group-hover:scale-105 transition-transform">
@@ -744,6 +761,43 @@
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
+        async function fetchStoresFromSupabase() {
+            if (!supabaseClient) return;
+
+            try {
+                const { data: stores, error } = await supabaseClient
+                    .from('stores')
+                    .select('*');
+
+                if (error || !stores || stores.length === 0) return;
+
+                const storesContainer = document.getElementById('storesContainer');
+                
+                stores.forEach(store => {
+                    // Prevent duplicate if perriallenstore is fetched from Supabase
+                    if (store.slug === 'perriallenstore') return;
+
+                    const storeCard = `
+                        <a href="store.html?slug=${store.slug}" class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all group cursor-pointer flex-shrink-0">
+                            <div class="flex items-center gap-3">
+                                <img src="${store.logo_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=100&auto=format&fit=crop&q=80'}" alt="${store.name}" class="w-14 h-14 rounded-custom object-cover border border-gray-100 group-hover:scale-105 transition-transform">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 text-sm group-hover:text-forest transition-colors">${store.name}</h3>
+                                    <p class="text-xs text-gray-500">${store.location || 'Local Merchant'}</p>
+                                    <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-bold">
+                                        <i class="fa-solid fa-star"></i> 4.9 <span class="text-gray-400 font-normal">(Verified)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    storesContainer.insertAdjacentHTML('beforeend', storeCard);
+                });
+            } catch (err) {
+                console.error('Error fetching dynamic stores:', err);
+            }
+        }
+
         async function fetchProducts() {
             const grid = document.getElementById('productsGrid');
             if (!supabaseClient) {
@@ -887,6 +941,7 @@
             setTimeout(typeEffect, 500);
             initBubbles();
             fetchProducts();
+            fetchStoresFromSupabase();
         });
 
         function initBubbles() {
