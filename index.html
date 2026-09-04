@@ -66,7 +66,6 @@
             cursor: pointer;
         }
         
-        /* Interactive Letter Separation Animation */
         .brand-text .char {
             display: inline-block;
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.35s ease, filter 0.35s ease;
@@ -104,7 +103,6 @@
             background-color: #059669;
         }
 
-        /* Neon Glow Effects */
         @keyframes neonGlow {
             0% { background-position: 0% 50%; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), 0 0 30px rgba(250, 234, 115, 0.25); }
             50% { background-position: 100% 50%; box-shadow: 0 0 25px rgba(250, 234, 115, 0.5), 0 0 45px rgba(16, 185, 129, 0.35); }
@@ -161,7 +159,6 @@
             color: white !important;
         }
 
-        /* 3D Interactive Floating Bubbles */
         .bubble-canvas {
             position: absolute;
             inset: 0;
@@ -171,7 +168,6 @@
             z-index: 1;
         }
 
-        /* Typing & Shimmer Text Animations */
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -198,7 +194,6 @@
         }
     </style>
 
-    <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-appBg text-gray-800 font-sans antialiased min-h-screen flex flex-col selection:bg-yellowAccent selection:text-forest">
@@ -390,16 +385,12 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- UPGRADED AI INTERFACE HERO SECTION -->
+        <!-- AI HERO SECTION -->
         <section class="relative">
             <div id="greenBox" class="bg-forest rounded-3xl p-6 sm:p-12 text-white shadow-2xl overflow-hidden relative border border-forest-light/40">
-                
-                <!-- Interactive 3D Physics Bubbles Canvas -->
                 <canvas id="bubbleCanvas" class="bubble-canvas"></canvas>
 
                 <div class="max-w-3xl mx-auto text-center space-y-6 relative z-10 pointer-events-none">
-                    
-                    <!-- Advanced Animated Headline -->
                     <div class="min-h-[90px] sm:min-h-[120px] flex flex-col justify-center items-center">
                         <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
                             <span id="animatedTypewriter" class="animated-heading-text typing-cursor"></span>
@@ -409,56 +400,45 @@
                         </p>
                     </div>
 
-                    <!-- NEON GLOWING AI CHAT BOX CONTAINER -->
                     <div class="neon-chat-glow p-0.5 shadow-2xl pointer-events-auto transition-transform duration-300 hover:scale-[1.01]">
                         <div class="bg-white rounded-[18px] p-3 sm:p-5 text-gray-800 text-left border border-white/20 backdrop-blur-md">
-                            
                             <form onsubmit="event.preventDefault();" class="flex flex-col sm:flex-row gap-2.5 items-center">
                                 <div class="relative flex-1 w-full">
-                                    <!-- Website Logo as AI Agent Badge (Left Side) -->
                                     <div class="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center justify-center bg-gray-50 rounded-lg p-1 border border-gray-200/80 shadow-xs z-10">
                                         <img src="https://lh3.googleusercontent.com/d/1Gla2mhackX8vGBdIs_JqI3xLoqffu-HI" alt="Pixbly AI Agent" class="h-6 w-auto object-contain">
                                     </div>
-
                                     <input type="text" id="aiQuery" placeholder="Ask Pixbly AI (e.g. 'Red t-shirt size M under 3500 LKR in Maharagama')" class="w-full pl-14 sm:pl-16 pr-4 py-3.5 bg-gray-50/90 hover:bg-gray-50 rounded-xl text-sm font-semibold border border-gray-200 outline-none focus:border-forest focus:ring-2 focus:ring-forest/20 transition-all placeholder:text-gray-400 placeholder:font-normal">
                                 </div>
-                                
                                 <button type="submit" class="w-full sm:w-auto bg-yellowAccent hover:bg-yellowAccent-hover text-forest font-extrabold px-7 py-3.5 rounded-xl text-sm flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:shadow-yellowAccent/20 active:scale-95 shrink-0">
                                     <span>Ask Pixbly</span>
                                     <i class="fa-solid fa-paper-plane text-xs"></i>
                                 </button>
                             </form>
 
-                            <!-- AI Interactive Suggestion Chips -->
                             <div class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-2">
                                 <span class="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider flex items-center gap-1.5 mr-1">
                                     <i class="fa-solid fa-bolt text-amber-500"></i> Suggestions:
                                 </span>
-                                
                                 <button onclick="setPrompt('Cotton t-shirt size M under 2500 LKR')" class="text-xs bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-3.5 py-1.5 rounded-full transition-all border border-emerald-200/60 shadow-sm hover:shadow active:scale-95 flex items-center gap-1.5">
                                     <i class="fa-solid fa-shirt text-emerald-600 text-[10px]"></i> Cotton t-shirt size M
                                 </button>
-
                                 <button onclick="setPrompt('Linen long-sleeve shirt in Maharagama')" class="text-xs bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-3.5 py-1.5 rounded-full transition-all border border-emerald-200/60 shadow-sm hover:shadow active:scale-95 flex items-center gap-1.5">
                                     <i class="fa-solid fa-shirt text-emerald-600 text-[10px]"></i> Linen shirt Maharagama
                                 </button>
-
                                 <button onclick="setPrompt('Floral print summer dress size S')" class="text-xs bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-3.5 py-1.5 rounded-full transition-all border border-emerald-200/60 shadow-sm hover:shadow active:scale-95 flex items-center gap-1.5">
                                     <i class="fa-solid fa-person-dress text-emerald-600 text-[10px]"></i> Floral dress size S
                                 </button>
-
                                 <button onclick="setPrompt('Slim fit blue denim jeans size 32')" class="text-xs bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-3.5 py-1.5 rounded-full transition-all border border-emerald-200/60 shadow-sm hover:shadow active:scale-95 flex items-center gap-1.5">
                                     <i class="fa-solid fa-socks text-emerald-600 text-[10px]"></i> Denim jeans size 32
                                 </button>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
+        <!-- STORES SECTION -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -523,6 +503,7 @@
             </div>
         </section>
 
+        <!-- CATEGORIES SECTION -->
         <section class="space-y-4">
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Explore Clothing Categories</h2>
             
@@ -548,7 +529,7 @@
             </div>
         </section>
 
-        <!-- DYNAMIC PRODUCTS SECTION (Loaded from Supabase) -->
+        <!-- DYNAMIC PRODUCTS SECTION -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -559,7 +540,6 @@
             </div>
 
             <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Products will be rendered dynamically via Supabase JS -->
                 <div class="col-span-full text-center py-8 text-gray-400 font-medium">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-forest"></i>
                     <p>Loading items from Supabase...</p>
@@ -567,6 +547,7 @@
             </div>
         </section>
 
+        <!-- OFFERS SECTION -->
         <section class="space-y-4">
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Offers For You</h2>
 
@@ -597,6 +578,7 @@
             </div>
         </section>
 
+        <!-- FEATURED WEEKLY ITEMS -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -615,7 +597,6 @@
                             <h3 class="font-bold text-gray-800 text-sm line-clamp-1">Casual Linen Shirt</h3>
                             <p class="text-sm font-extrabold text-forest mt-1">3,800 LKR</p>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-[10px] text-gray-400 font-semibold block">Available Colors:</span>
                             <div class="flex items-center gap-1.5">
@@ -624,7 +605,6 @@
                                 <span class="w-4 h-4 rounded-full bg-blue-900 border border-gray-300 cursor-pointer" title="Navy"></span>
                             </div>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-[10px] text-gray-400 font-semibold block">Sizes:</span>
                             <div class="flex items-center gap-1 text-[10px] font-bold text-gray-600">
@@ -645,7 +625,6 @@
                             <h3 class="font-bold text-gray-800 text-sm line-clamp-1">Summer Floral Dress</h3>
                             <p class="text-sm font-extrabold text-forest mt-1">4,200 LKR</p>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-[10px] text-gray-400 font-semibold block">Available Colors:</span>
                             <div class="flex items-center gap-1.5">
@@ -653,7 +632,6 @@
                                 <span class="w-4 h-4 rounded-full bg-rose-400 border border-gray-300 cursor-pointer" title="Pink"></span>
                             </div>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-[10px] text-gray-400 font-semibold block">Sizes:</span>
                             <div class="flex items-center gap-1 text-[10px] font-bold text-gray-600">
@@ -673,7 +651,6 @@
                             <h3 class="font-bold text-gray-800 text-sm line-clamp-1">Slim Fit Denim Jeans</h3>
                             <p class="text-sm font-extrabold text-forest mt-1">5,500 LKR</p>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-[10px] text-gray-400 font-semibold block">Available Colors:</span>
                             <div class="flex items-center gap-1.5">
@@ -681,7 +658,6 @@
                                 <span class="w-4 h-4 rounded-full bg-gray-900 border border-gray-300 cursor-pointer" title="Black"></span>
                             </div>
                         </div>
-
                         <div class="space-y-1">
                             <span class="text-[10px] text-gray-400 font-semibold block">Waist Sizes:</span>
                             <div class="flex items-center gap-1 text-[10px] font-bold text-gray-600">
@@ -758,22 +734,19 @@
         </div>
     </footer>
 
-    <!-- SUPABASE CONFIGURATION & DYNAMIC PRODUCT RENDER SCRIPT -->
+    <!-- DYNAMIC SUPABASE & APP LOGIC -->
     <script>
-        // Supabase Initialization (Replace placeholders with your actual keys locally)
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const SUPABASE_URL = 'https://xkkelzeeiiiqtpsvntgi.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_PolGhxMIQmuTXtkbWbVvBg_1CaeVni9';
         
         let supabaseClient = null;
-        if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+        if (SUPABASE_URL !== 'https://xkkelzeeiiiqtpsvntgi.supabase.co' && SUPABASE_KEY !== 'sb_publishable_PolGhxMIQmuTXtkbWbVvBg_1CaeVni9') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        // Fetch products from Supabase
         async function fetchProducts() {
             const grid = document.getElementById('productsGrid');
             if (!supabaseClient) {
-                // Fallback mock UI if keys are not set yet
                 renderFallbackProducts();
                 return;
             }
@@ -794,13 +767,13 @@
                         <div class="relative aspect-square overflow-hidden bg-gray-100">
                             <img src="${product.image_url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80'}" alt="${product.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
-                                ${product.store_name}
+                                ${product.store_name || 'Local Store'}
                             </span>
                         </div>
                         <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
                             <div>
                                 <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">${product.title}</h3>
-                                <p class="text-xs text-gray-400 mt-0.5">${product.location || 'Local Store'}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">${product.location || 'In Stock'}</p>
                             </div>
                             <div class="flex items-center justify-between pt-2 border-t border-gray-50">
                                 <div>
@@ -854,10 +827,7 @@
                 </div>
             `).join('');
         }
-    </script>
 
-    <!-- INTERACTIVE UI SCRIPT IMPLEMENTATION -->
-    <script>
         function toggleDrawer() {
             const drawer = document.getElementById('sideDrawer');
             drawer.classList.toggle('active');
@@ -874,7 +844,6 @@
             }
         });
 
-        /* Dynamic Animated Typewriter Headline & Subtitle */
         const phrases = [
             "What clothing are you looking for?",
             "Find local outfits & boutiques.",
@@ -920,7 +889,6 @@
             fetchProducts();
         });
 
-        /* Interactive 3D Canvas Bubbles with Cursor Avoidance */
         function initBubbles() {
             const canvas = document.getElementById('bubbleCanvas');
             const container = document.getElementById('greenBox');
@@ -960,7 +928,6 @@
                     if (this.x < 0 || this.x > width) this.vx *= -1;
                     if (this.y < 0 || this.y > height) this.vy *= -1;
 
-                    // Mouse Touch / Hover Push Away Effect
                     if (mouse.x !== null && mouse.y !== null) {
                         const dx = this.x - mouse.x;
                         const dy = this.y - mouse.y;
@@ -982,7 +949,6 @@
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     
-                    // 3D Spherical Radial Gradient
                     const grad = ctx.createRadialGradient(
                         this.x - this.radius * 0.3, 
                         this.y - this.radius * 0.3, 
@@ -1045,7 +1011,6 @@
             animate();
         }
 
-        /* Dynamic Search Example Rotating Text */
         const searchExamples = [
             'Red Linen Shirts',
             'Cotton T-Shirts in Maharagama',
