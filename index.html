@@ -86,50 +86,17 @@
         }
 
         @keyframes neonGlow {
-            0% { background-position: 0% 50%; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), 0 0 30px rgba(250, 234, 115, 0.25); }
-            50% { background-position: 100% 50%; box-shadow: 0 0 25px rgba(250, 234, 115, 0.5), 0 0 45px rgba(16, 185, 129, 0.35); }
-            100% { background-position: 0% 50%; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), 0 0 30px rgba(250, 234, 115, 0.25); }
-        }
-
-        .neon-search-container {
-            position: relative;
-            border-radius: 18px;
-            padding: 2px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(229, 231, 235, 1);
+            0% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(250, 234, 115, 0.2); }
+            50% { background-position: 100% 50%; box-shadow: 0 0 30px rgba(250, 234, 115, 0.5), 0 0 50px rgba(16, 185, 129, 0.35); }
+            100% { background-position: 0% 50%; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px rgba(250, 234, 115, 0.2); }
         }
 
         .neon-chat-glow {
-            background: linear-gradient(90deg, #10B981, #FAEA73, #3B82F6, #10B981);
+            background: linear-gradient(90deg, #10B981, #FAEA73, #34D399, #10B981);
             background-size: 300% 300%;
-            animation: neonGlow 4s ease infinite;
-            border-radius: 24px;
-        }
-
-        .placeholder-slider {
-            position: absolute;
-            left: 1rem;
-            pointer-events: none;
-            transition: transform 0.4s ease, opacity 0.4s ease;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            color: #9CA3AF;
-            font-size: 0.875rem;
-        }
-
-        .placeholder-slider.slide-up { transform: translateY(-120%); opacity: 0; }
-
-        @keyframes micPulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .mic-listening {
-            animation: micPulse 1.2s infinite;
-            background-color: #EF4444 !important;
-            color: white !important;
+            animation: neonGlow 5s ease infinite;
+            border-radius: 28px;
+            padding: 2px;
         }
 
         .bubble-canvas {
@@ -141,46 +108,15 @@
             z-index: 1;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .modal-slide-up {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
         }
 
-        .animated-heading-text {
-            background: linear-gradient(135deg, #FFFFFF 0%, #FAEA73 50%, #34D399 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientShift 4s ease infinite;
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
-
-        .typing-cursor::after {
-            content: '|';
-            animation: blink 0.8s infinite;
-            color: #FAEA73;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Custom Scrollbar for Chat Box */
-        .chat-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        .ai-pulse { animation: pulseGlow 2s ease-in-out infinite; }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -210,102 +146,16 @@
                 </a>
             </div>
 
-            <!-- DESKTOP SEARCH BAR -->
-            <div class="flex-1 max-w-2xl hidden md:block relative">
-                <div id="desktopSearchWrapper" class="neon-search-container">
-                    <form onsubmit="event.preventDefault(); sendChatMessage('desktopSearchInput');" class="relative flex items-center bg-white rounded-[16px] p-1.5 transition-all">
-                        
-                        <select class="bg-gray-50 hover:bg-gray-100 text-xs font-bold text-gray-700 px-3 py-2.5 outline-none cursor-pointer border-r border-gray-200 rounded-l-custom transition-colors shrink-0">
-                            <option value="all">All Apparel</option>
-                            <option value="men">Men's Wear</option>
-                            <option value="women">Women's Wear</option>
-                            <option value="kids">Kids' Wear</option>
-                        </select>
-                        
-                        <div class="relative flex-1 flex items-center h-10 overflow-hidden">
-                            <div id="searchPlaceholder" class="placeholder-slider">
-                                <span>Search "<span id="placeholderText" class="font-semibold text-gray-600">Red Linen Shirts</span>" near you...</span>
-                            </div>
-
-                            <input type="text" id="desktopSearchInput" autocomplete="off" class="w-full bg-transparent px-4 py-2 text-sm text-gray-800 outline-none z-10 font-medium">
-                        </div>
-
-                        <button type="button" id="micBtn" onclick="toggleVoiceSearch('desktopSearchInput', 'micBtn')" title="Search with Voice" class="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-forest hover:bg-gray-100 transition-all mr-1 shrink-0">
-                            <i class="fa-solid fa-microphone text-sm"></i>
-                        </button>
-                        
-                        <button type="submit" aria-label="Search" class="bg-forest hover:bg-forest-light text-yellowAccent w-10 h-10 rounded-custom flex items-center justify-center shrink-0 transition-all hover:scale-105 active:scale-95 shadow-sm">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <div id="searchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50 transform transition-all duration-200">
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between items-center text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                <span><i class="fa-solid fa-clock-rotate-left mr-1"></i> Recent Clothing Searches</span>
-                                <button type="button" class="hover:text-red-500 text-[10px]">Clear</button>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span onclick="applySearch('Linen Shirts Maharagama')" class="text-xs bg-gray-100 hover:bg-forest hover:text-white px-3 py-1.5 rounded-full cursor-pointer transition-all text-gray-700 font-medium"><i class="fa-solid fa-magnifying-glass text-[10px] mr-1 opacity-50"></i> Linen Shirts Maharagama</span>
-                                <span onclick="applySearch('Oversized Hoodies')" class="text-xs bg-gray-100 hover:bg-forest hover:text-white px-3 py-1.5 rounded-full cursor-pointer transition-all text-gray-700 font-medium"><i class="fa-solid fa-magnifying-glass text-[10px] mr-1 opacity-50"></i> Oversized Hoodies</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                <span><i class="fa-solid fa-fire text-amber-500 mr-1"></i> Trending Apparel Examples</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
-                                <div onclick="applySearch('Linen Shirts')" class="p-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-gray-700 hover:text-forest flex items-center gap-2">
-                                    <i class="fa-solid fa-shirt text-forest"></i> Linen Shirts under 4,000 LKR
-                                </div>
-                                <div onclick="applySearch('Floral Dresses')" class="p-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-gray-700 hover:text-forest flex items-center gap-2">
-                                    <i class="fa-solid fa-person-dress text-forest"></i> Summer Dresses Nearby
-                                </div>
-                                <div onclick="applySearch('Slim Fit Jeans')" class="p-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-gray-700 hover:text-forest flex items-center gap-2">
-                                    <i class="fa-solid fa-socks text-forest"></i> Slim Fit Denim Jeans
-                                </div>
-                                <div onclick="applySearch('Cotton Polo Tees')" class="p-2 hover:bg-emerald-50 rounded-lg cursor-pointer text-gray-700 hover:text-forest flex items-center gap-2">
-                                    <i class="fa-solid fa-shirt text-forest"></i> Cotton Polo Shirts Deals
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="flex items-center gap-3">
+                <button onclick="openChatModal()" class="bg-forest text-yellowAccent hover:bg-forest-light px-4 py-2.5 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-sm">
+                    <i class="fa-solid fa-sparkles text-yellowAccent"></i>
+                    <span>Ask PickBly AI</span>
+                </button>
+
                 <button onclick="toggleDrawer()" class="p-3 text-forest hover:bg-forest/10 rounded-custom transition-all flex items-center gap-2 font-semibold text-sm">
                     <span class="hidden sm:inline">Menu</span>
                     <i class="fa-solid fa-bars-staggered text-xl"></i>
                 </button>
-            </div>
-        </div>
-
-        <div class="px-4 pb-4 md:hidden">
-            <div id="mobileSearchWrapper" class="neon-search-container">
-                <form onsubmit="event.preventDefault(); sendChatMessage('mobileSearchInput');" class="relative flex items-center bg-white rounded-[16px] p-1">
-                    <select class="bg-gray-50 text-xs font-bold text-gray-700 px-2 py-2 outline-none border-r border-gray-200 rounded-l-custom">
-                        <option value="all">All</option>
-                        <option value="men">Men</option>
-                        <option value="women">Women</option>
-                        <option value="kids">Kids</option>
-                    </select>
-                    
-                    <div class="relative flex-1 flex items-center h-8 overflow-hidden">
-                        <input type="text" id="mobileSearchInput" placeholder="Search clothes locally..." class="w-full bg-transparent px-3 py-1.5 text-xs text-gray-800 outline-none font-medium">
-                    </div>
-
-                    <button type="button" id="mobileMicBtn" onclick="toggleVoiceSearch('mobileSearchInput', 'mobileMicBtn')" class="w-7 h-7 rounded-full flex items-center justify-center text-gray-500 hover:text-forest mr-1 shrink-0">
-                        <i class="fa-solid fa-microphone text-xs"></i>
-                    </button>
-
-                    <button type="submit" aria-label="Search mobile" class="bg-forest text-yellowAccent w-8 h-8 rounded-custom flex items-center justify-center shrink-0 shadow-sm">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </button>
-                </form>
             </div>
         </div>
     </header>
@@ -374,94 +224,70 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- AI HERO CHAT SECTION -->
         <section class="relative">
-            <div id="greenBox" class="bg-forest rounded-3xl p-4 sm:p-8 text-white shadow-2xl overflow-hidden relative border border-forest-light/40">
+            <div id="greenBox" class="bg-forest rounded-3xl p-6 sm:p-14 text-white shadow-2xl overflow-hidden relative border border-forest-light/40 min-h-[460px] flex flex-col justify-center items-center">
                 <canvas id="bubbleCanvas" class="bubble-canvas"></canvas>
 
-                <div class="max-w-3xl mx-auto space-y-4 relative z-10">
-                    <div class="text-center">
-                        <h1 class="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-                            <span id="animatedTypewriter" class="animated-heading-text typing-cursor"></span>
+                <div class="max-w-3xl w-full mx-auto space-y-8 relative z-10 text-center">
+                    <div>
+                        <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white">
+                            Discover Local Fashion with <span class="text-yellowAccent">AI</span>
                         </h1>
-                        <p id="animatedSubtitle" class="text-xs sm:text-sm text-emerald-200/90 font-medium mt-1 transition-opacity duration-500 opacity-0">
-                            Smart local apparel discovery powered by <span class="text-yellowAccent font-bold">Pixbly AI</span> agent
+                        <p class="text-xs sm:text-base text-emerald-200/90 font-medium mt-3 max-w-xl mx-auto">
+                            Ask PickBly AI to find outfits, shops, or compare local apparel styles in real time.
                         </p>
                     </div>
 
-                    <!-- REAL CHATBOT CONTAINER -->
-                    <div class="neon-chat-glow p-0.5 shadow-2xl pointer-events-auto">
-                        <div class="bg-white rounded-[22px] flex flex-col h-[420px] sm:h-[460px] overflow-hidden text-gray-800 border border-white/20 backdrop-blur-md">
+                    <div class="neon-chat-glow w-full text-left shadow-2xl">
+                        <div class="bg-[#113329] rounded-[26px] p-4 sm:p-5 text-white flex flex-col gap-4 border border-emerald-500/20 backdrop-blur-md">
                             
-                            <!-- Chat Header -->
-                            <div class="bg-forest text-white px-5 py-3 flex items-center justify-between border-b border-forest-light/30">
-                                <div class="flex items-center gap-3">
-                                    <div class="relative">
-                                        <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center p-1 border border-yellowAccent/30">
-                                            <img src="https://lh3.googleusercontent.com/d/1Gla2mhackX8vGBdIs_JqI3xLoqffu-HI" alt="Pixbly AI" class="h-6 w-auto object-contain">
-                                        </div>
-                                        <span class="w-2.5 h-2.5 bg-emerald-400 border-2 border-forest rounded-full absolute bottom-0 right-0"></span>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-extrabold text-sm text-white flex items-center gap-1.5">
-                                            Pixbly AI Assistant
-                                            <span class="bg-yellowAccent text-forest text-[9px] font-black px-1.5 py-0.2 rounded">PRO</span>
-                                        </h3>
-                                        <p class="text-[11px] text-emerald-200/80">Online | Ask me anything about clothes & stores</p>
-                                    </div>
-                                </div>
-                                <button onclick="clearChatHistory()" class="text-xs text-emerald-200 hover:text-yellowAccent transition-colors flex items-center gap-1">
-                                    <i class="fa-solid fa-rotate-right text-[10px]"></i> Reset
-                                </button>
-                            </div>
+                            <form onsubmit="event.preventDefault(); submitHeroChat();" class="relative flex items-center">
+                                <input type="text" id="heroPromptInput" autocomplete="off" placeholder="Ask PickBly AI anything about apparel, shops, or trends..." class="w-full bg-transparent text-sm sm:text-base text-white placeholder:text-emerald-200/50 outline-none pr-10 font-medium">
+                            </form>
 
-                            <!-- Chat Messages Display Area -->
-                            <div id="chatMessages" class="flex-1 p-4 overflow-y-auto chat-scroll space-y-3.5 bg-slate-50/50">
-                                <!-- Bot Welcome Message -->
-                                <div class="flex items-start gap-2.5 max-w-[85%]">
-                                    <div class="w-7 h-7 rounded-full bg-forest text-yellowAccent flex items-center justify-center shrink-0 text-xs font-bold shadow-sm">
-                                        <i class="fa-solid fa-robot"></i>
-                                    </div>
-                                    <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-gray-200/80 shadow-xs text-xs sm:text-sm text-gray-800 leading-relaxed">
-                                        👋 Hi! මම ඔයාගේ local fashion AI assistant. Sri Lanka වටේ තියෙන clothing stores, clothes search කරන්න හෝ style advice ගන්න මගෙන් ඕනෑම දෙයක් අහන්න!
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat Input Area -->
-                            <div class="p-3 bg-white border-t border-gray-100 flex flex-col gap-2">
-                                <form onsubmit="event.preventDefault(); sendChatMessage('chatInput');" class="flex items-center gap-2">
-                                    <input type="text" id="chatInput" placeholder="Type message (e.g. 'Red linen shirt under 3500 LKR in Maharagama')" class="flex-1 bg-gray-50/90 hover:bg-gray-50 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold border border-gray-200 outline-none focus:border-forest focus:ring-2 focus:ring-forest/20 transition-all placeholder:text-gray-400">
-                                    <button type="submit" id="askBtn" class="bg-yellowAccent hover:bg-yellowAccent-hover text-forest font-extrabold px-5 py-3 rounded-xl text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95 shrink-0">
-                                        <span>Send</span>
-                                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                            <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-emerald-800/60">
+                                
+                                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                                    <button type="button" onclick="toggleHeroChip(this)" class="hero-chip active text-xs bg-yellowAccent/20 text-yellowAccent border border-yellowAccent/40 hover:bg-yellowAccent/30 px-3 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 shrink-0">
+                                        <i class="fa-solid fa-compass text-[11px]"></i>
+                                        <span>Deep Search</span>
                                     </button>
-                                </form>
-
-                                <!-- Suggestions Chips -->
-                                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase shrink-0 flex items-center gap-1">
-                                        <i class="fa-solid fa-bolt text-amber-500"></i> Suggestions:
-                                    </span>
-                                    <button onclick="setPrompt('Cotton t-shirt size M under 2500 LKR')" class="text-[11px] bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-2.5 py-1 rounded-full transition-all border border-emerald-200/60 shrink-0">
-                                        👕 Cotton t-shirt size M
+                                    <button type="button" onclick="toggleHeroChip(this)" class="hero-chip text-xs bg-emerald-900/60 text-emerald-200/80 border border-emerald-700/50 hover:bg-emerald-800/60 px-3 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 shrink-0">
+                                        <i class="fa-solid fa-globe text-[11px]"></i>
+                                        <span>Web</span>
                                     </button>
-                                    <button onclick="setPrompt('Linen long-sleeve shirt in Maharagama')" class="text-[11px] bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-2.5 py-1 rounded-full transition-all border border-emerald-200/60 shrink-0">
-                                        👔 Linen shirt Maharagama
-                                    </button>
-                                    <button onclick="setPrompt('Floral print summer dress size S')" class="text-[11px] bg-emerald-50 hover:bg-forest hover:text-white text-forest font-semibold px-2.5 py-1 rounded-full transition-all border border-emerald-200/60 shrink-0">
-                                        👗 Floral dress size S
+                                    <button type="button" onclick="toggleHeroChip(this)" class="hero-chip text-xs bg-emerald-900/60 text-emerald-200/80 border border-emerald-700/50 hover:bg-emerald-800/60 px-3 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 shrink-0">
+                                        <i class="fa-solid fa-image text-[11px]"></i>
+                                        <span>Vision</span>
                                     </button>
                                 </div>
-                            </div>
 
+                                <div class="flex items-center gap-2 ml-auto">
+                                    <button type="button" title="Attach image" class="w-9 h-9 rounded-full bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 flex items-center justify-center transition-all">
+                                        <i class="fa-solid fa-paperclip text-xs"></i>
+                                    </button>
+                                    <button type="button" title="Voice Search" onclick="triggerHeroVoice()" class="w-9 h-9 rounded-full bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 flex items-center justify-center transition-all">
+                                        <i class="fa-solid fa-microphone text-xs"></i>
+                                    </button>
+                                    <button type="button" onclick="submitHeroChat()" aria-label="Send query" class="w-10 h-10 rounded-full bg-yellowAccent hover:bg-yellowAccent-hover text-forest font-bold flex items-center justify-center transition-all shadow-md active:scale-95">
+                                        <i class="fa-solid fa-arrow-up text-sm"></i>
+                                    </button>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
+                        <span class="text-emerald-200/70 font-semibold">Try asking:</span>
+                        <button onclick="quickHeroAsk('Find oversized cotton hoodies')" class="bg-emerald-900/50 hover:bg-emerald-800 text-emerald-100 px-3 py-1.5 rounded-full border border-emerald-700/50 transition-all">"Find oversized cotton hoodies"</button>
+                        <button onclick="quickHeroAsk('Best local denim brands')" class="bg-emerald-900/50 hover:bg-emerald-800 text-emerald-100 px-3 py-1.5 rounded-full border border-emerald-700/50 transition-all">"Best local denim brands"</button>
+                    </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- STORES SECTION -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -472,7 +298,6 @@
             </div>
 
             <div id="storesContainer" class="flex gap-4 overflow-x-auto no-scrollbar pb-2 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
-                <!-- FEATURED STORE: PERRI ALLEN -->
                 <a href="store.html?slug=perriallenstore" class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border-2 border-emerald-500/80 shadow-sm hover:shadow-md transition-all group cursor-pointer flex-shrink-0 relative overflow-hidden">
                     <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-bl-lg">Verified</span>
                     <div class="flex items-center gap-3">
@@ -514,36 +339,9 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all group cursor-pointer flex-shrink-0">
-                    <div class="flex items-center gap-3">
-                        <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=100&auto=format&fit=crop&q=80" alt="Logo" class="w-14 h-14 rounded-custom object-cover border border-gray-100 group-hover:scale-105 transition-transform">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-forest transition-colors">Vogue Apparel Hub</h3>
-                            <p class="text-xs text-gray-500">Colombo 04 • Fashion</p>
-                            <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-bold">
-                                <i class="fa-solid fa-star"></i> 4.7 <span class="text-gray-400 font-normal">(95)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all group cursor-pointer flex-shrink-0">
-                    <div class="flex items-center gap-3">
-                        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=100&auto=format&fit=crop&q=80" alt="Logo" class="w-14 h-14 rounded-custom object-cover border border-gray-100 group-hover:scale-105 transition-transform">
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-sm group-hover:text-forest transition-colors">Denim & Co. Studio</h3>
-                            <p class="text-xs text-gray-500">Kottawa • Jeans & Tops</p>
-                            <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-bold">
-                                <i class="fa-solid fa-star"></i> 5.0 <span class="text-gray-400 font-normal">(64)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <!-- CATEGORIES SECTION -->
         <section class="space-y-4">
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Explore Clothing Categories</h2>
             
@@ -560,16 +358,9 @@
                 <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
                     <i class="fa-solid fa-socks text-forest"></i> Jeans & Trousers
                 </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
-                    <i class="fa-solid fa-user-tie text-forest"></i> Formal Wear
-                </button>
-                <button class="flex items-center gap-2 bg-white hover:bg-forest/5 text-gray-700 hover:text-forest border border-gray-200 px-5 py-3 rounded-full text-sm font-semibold transition-all flex-shrink-0">
-                    <i class="fa-solid fa-vest text-forest"></i> Jackets & Hoodies
-                </button>
             </div>
         </section>
 
-        <!-- DYNAMIC PRODUCTS SECTION -->
         <section class="space-y-4" id="productsSection">
             <div class="flex items-center justify-between">
                 <div>
@@ -582,136 +373,60 @@
             <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 <div class="col-span-full text-center py-8 text-gray-400 font-medium">
                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-forest"></i>
-                    <p>Loading items from Supabase...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- OFFERS SECTION -->
-        <section class="space-y-4">
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Offers For You</h2>
-
-            <div class="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-                <div class="min-w-[300px] sm:min-w-[450px] bg-gradient-to-r from-forest to-forest-light rounded-3xl p-6 text-white flex justify-between items-center relative overflow-hidden shadow-md flex-shrink-0">
-                    <div class="space-y-2 max-w-[60%] z-10">
-                        <span class="bg-yellowAccent text-forest text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full">Limited Time Offer</span>
-                        <h3 class="text-lg sm:text-xl font-bold leading-snug">Get 30% OFF on First Apparel Order!</h3>
-                        <p class="text-xs text-gray-200">Use code: <span class="font-mono text-yellowAccent font-bold">WEAR30</span></p>
-                        <div class="pt-2">
-                            <button class="bg-white text-forest hover:bg-yellowAccent font-bold text-xs px-4 py-2 rounded-custom transition-all">Claim Now</button>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-shirt text-7xl sm:text-8xl text-white/10 absolute -right-2 -bottom-2 pointer-events-none"></i>
-                </div>
-
-                <div class="min-w-[300px] sm:min-w-[450px] bg-gradient-to-r from-amber-600 to-yellow-500 rounded-3xl p-6 text-white flex justify-between items-center relative overflow-hidden shadow-md flex-shrink-0">
-                    <div class="space-y-2 max-w-[60%] z-10">
-                        <span class="bg-white text-amber-700 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full">Flash Deal</span>
-                        <h3 class="text-lg sm:text-xl font-bold leading-snug">Weekend Fashion Clearance Sale</h3>
-                        <p class="text-xs text-amber-100">Up to 50% Off at Local Boutiques</p>
-                        <div class="pt-2">
-                            <button class="bg-forest text-yellowAccent hover:bg-forest-dark font-bold text-xs px-4 py-2 rounded-custom transition-all">Explore Deals</button>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-tags text-7xl sm:text-8xl text-white/10 absolute -right-2 -bottom-2 pointer-events-none"></i>
-                </div>
-            </div>
-        </section>
-
-        <!-- FEATURED WEEKLY ITEMS -->
-        <section class="space-y-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Clothing Items This Week</h2>
-                    <p class="text-xs sm:text-sm text-gray-500">Curated local apparel with interactive size & color previews</p>
-                </div>
-                <a href="#" class="text-sm font-bold text-forest hover:text-forest-light flex items-center gap-1">Browse All <i class="fa-solid fa-arrow-right text-xs"></i></a>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all flex gap-4">
-                    <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&auto=format&fit=crop&q=80" alt="Clothing" class="w-28 h-36 rounded-custom object-cover bg-gray-100 flex-shrink-0">
-                    <div class="flex flex-col justify-between flex-grow">
-                        <div>
-                            <span class="text-[10px] font-bold text-forest uppercase tracking-wider">Aura Studio</span>
-                            <h3 class="font-bold text-gray-800 text-sm line-clamp-1">Casual Linen Shirt</h3>
-                            <p class="text-sm font-extrabold text-forest mt-1">3,800 LKR</p>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] text-gray-400 font-semibold block">Available Colors:</span>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded-full bg-emerald-800 border border-gray-300 cursor-pointer" title="Forest Green"></span>
-                                <span class="w-4 h-4 rounded-full bg-stone-200 border border-gray-300 cursor-pointer" title="Beige"></span>
-                                <span class="w-4 h-4 rounded-full bg-blue-900 border border-gray-300 cursor-pointer" title="Navy"></span>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] text-gray-400 font-semibold block">Sizes:</span>
-                            <div class="flex items-center gap-1 text-[10px] font-bold text-gray-600">
-                                <span class="px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200">S</span>
-                                <span class="px-1.5 py-0.5 bg-forest text-yellowAccent rounded font-bold">M</span>
-                                <span class="px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200">L</span>
-                                <span class="px-1.5 py-0.5 bg-gray-100 opacity-40 rounded border border-gray-200 line-through">XL</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all flex gap-4">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80" alt="Clothing" class="w-28 h-36 rounded-custom object-cover bg-gray-100 flex-shrink-0">
-                    <div class="flex flex-col justify-between flex-grow">
-                        <div>
-                            <span class="text-[10px] font-bold text-forest uppercase tracking-wider">Vogue Local</span>
-                            <h3 class="font-bold text-gray-800 text-sm line-clamp-1">Summer Floral Dress</h3>
-                            <p class="text-sm font-extrabold text-forest mt-1">4,200 LKR</p>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] text-gray-400 font-semibold block">Available Colors:</span>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded-full bg-yellow-300 border border-gray-300 cursor-pointer" title="Yellow"></span>
-                                <span class="w-4 h-4 rounded-full bg-rose-400 border border-gray-300 cursor-pointer" title="Pink"></span>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] text-gray-400 font-semibold block">Sizes:</span>
-                            <div class="flex items-center gap-1 text-[10px] font-bold text-gray-600">
-                                <span class="px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200">XS</span>
-                                <span class="px-1.5 py-0.5 bg-gray-100 rounded border border-gray-200">S</span>
-                                <span class="px-1.5 py-0.5 bg-forest text-yellowAccent rounded font-bold">M</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all flex gap-4">
-                    <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&auto=format&fit=crop&q=80" alt="Clothing" class="w-28 h-36 rounded-custom object-cover bg-gray-100 flex-shrink-0">
-                    <div class="flex flex-col justify-between flex-grow">
-                        <div>
-                            <span class="text-[10px] font-bold text-forest uppercase tracking-wider">Denim Co.</span>
-                            <h3 class="font-bold text-gray-800 text-sm line-clamp-1">Slim Fit Denim Jeans</h3>
-                            <p class="text-sm font-extrabold text-forest mt-1">5,500 LKR</p>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] text-gray-400 font-semibold block">Available Colors:</span>
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-4 h-4 rounded-full bg-blue-700 border border-gray-300 cursor-pointer" title="Classic Blue"></span>
-                                <span class="w-4 h-4 rounded-full bg-gray-900 border border-gray-300 cursor-pointer" title="Black"></span>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] text-gray-400 font-semibold block">Waist Sizes:</span>
-                            <div class="flex items-center gap-1 text-[10px] font-bold text-gray-600">
-                                <span class="px-1 py-0.5 bg-gray-100 rounded border border-gray-200">30</span>
-                                <span class="px-1 py-0.5 bg-forest text-yellowAccent rounded font-bold">32</span>
-                                <span class="px-1 py-0.5 bg-gray-100 rounded border border-gray-200">34</span>
-                            </div>
-                        </div>
-                    </div>
+                    <p>Loading items...</p>
                 </div>
             </div>
         </section>
 
     </main>
+
+    <div id="chatModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm opacity-0 invisible transition-all duration-300 flex items-center justify-center p-2 sm:p-6">
+        <div class="modal-slide-up w-full max-w-4xl bg-forest rounded-3xl shadow-2xl border border-forest-light/50 flex flex-col h-[85vh] sm:h-[80vh] overflow-hidden text-white relative">
+            
+            <div class="px-6 py-4 bg-forest-dark/90 border-b border-forest-light/40 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-yellowAccent/20 border border-yellowAccent/40 flex items-center justify-center text-yellowAccent">
+                        <i class="fa-solid fa-sparkles text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base flex items-center gap-2">
+                            PickBly AI Assistant
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-mono px-2 py-0.5 rounded-full border border-emerald-400/30">Live Agent</span>
+                        </h3>
+                        <p class="text-xs text-emerald-200/70">Powered by real-time local inventory search</p>
+                    </div>
+                </div>
+                <button onclick="closeChatModal()" aria-label="Close Chat" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div id="modalChatStream" class="flex-grow p-4 sm:p-6 overflow-y-auto space-y-6 no-scrollbar">
+                <div class="flex items-start gap-3 max-w-2xl">
+                    <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
+                        AI
+                    </div>
+                    <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm leading-relaxed text-emerald-50 shadow-sm">
+                        Hello! 👋 I'm your PickBly fashion assistant. Ask me anything about apparel, local clothing stock, or trending local shops. How can I help you today?
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-forest-dark/95 border-t border-forest-light/40 shrink-0">
+                <div class="neon-chat-glow">
+                    <div class="bg-[#113329] rounded-[22px] p-3 text-white flex flex-col gap-3">
+                        <form onsubmit="event.preventDefault(); sendModalMessage();" class="flex items-center">
+                            <input type="text" id="modalPromptInput" placeholder="Type your fashion query..." class="w-full bg-transparent text-sm text-white placeholder:text-emerald-200/50 outline-none pr-3 font-medium">
+                            <button type="submit" aria-label="Send" class="w-9 h-9 rounded-full bg-yellowAccent hover:bg-yellowAccent-hover text-forest font-bold flex items-center justify-center shrink-0 transition-all">
+                                <i class="fa-solid fa-arrow-up text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <footer class="bg-white border-t border-gray-200 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -735,7 +450,7 @@
                         </span>
                     </a>
                     <p class="text-xs text-gray-500 leading-relaxed">
-                        Connecting local buyers with nearby apparel merchants powered by AI search. Discover clothing, reserve outfits, and support local fashion boutiques seamlessly.
+                        Connecting local buyers with nearby apparel merchants powered by AI search.
                     </p>
                 </div>
 
@@ -745,15 +460,14 @@
                         <li><a href="#" class="hover:text-forest transition-colors">About PickBly</a></li>
                         <li><a href="#" class="hover:text-forest transition-colors">Trending Fashion Stores</a></li>
                         <li><a href="#" class="hover:text-forest transition-colors">AI Style Search Assistant</a></li>
-                        <li><a href="#" class="hover:text-forest transition-colors">Clothing Offers & Deals</a></li>
                     </ul>
                 </div>
 
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider">For Apparel Stores</h4>
-                    <p class="text-xs text-gray-500">Are you a boutique owner? Grow your local apparel sales with us.</p>
+                    <p class="text-xs text-gray-500">Are you a boutique owner? Grow your local sales with us.</p>
                     <a href="#" class="inline-flex items-center gap-2 bg-yellowAccent hover:bg-yellowAccent-hover text-forest font-extrabold text-xs px-4 py-2.5 rounded-custom transition-all shadow-sm">
-                        <i class="fa-solid fa-store"></i> List Your Boutique on PickBly
+                        <i class="fa-solid fa-store"></i> List Your Boutique
                     </a>
                 </div>
 
@@ -762,67 +476,152 @@
                     <div class="flex gap-3 text-gray-500">
                         <a href="#" aria-label="Facebook" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-forest hover:text-yellowAccent flex items-center justify-center transition-all"><i class="fa-brands fa-facebook-f text-xs"></i></a>
                         <a href="#" aria-label="Instagram" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-forest hover:text-yellowAccent flex items-center justify-center transition-all"><i class="fa-brands fa-instagram text-xs"></i></a>
-                        <a href="#" aria-label="Twitter" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-forest hover:text-yellowAccent flex items-center justify-center transition-all"><i class="fa-brands fa-twitter text-xs"></i></a>
                     </div>
-                    <p class="text-[11px] text-gray-400 pt-2">Need help? Email: support@pickbly.lk</p>
                 </div>
             </div>
 
             <div class="border-t border-gray-100 mt-10 pt-6 text-center text-xs text-gray-400">
-                <p>© 2026 PickBly (Pvt) Ltd. All rights reserved. Built for modern local apparel commerce.</p>
+                <p>© 2026 PickBly (Pvt) Ltd. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- DYNAMIC SUPABASE & REAL-TIME GEMINI AI CHAT LOGIC -->
     <script>
         const SUPABASE_URL = 'https://xkkelzeeiiiqtpsvntgi.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_PolGhxMIQmuTXtkbWbVvBg_1CaeVni9';
-        
-        // 🔑 Enter your Gemini API Key here
-        const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
 
         let supabaseClient = null;
         if (SUPABASE_URL && SUPABASE_KEY) {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        async function fetchStoresFromSupabase() {
-            if (!supabaseClient) return;
-
-            try {
-                const { data: stores, error } = await supabaseClient
-                    .from('stores')
-                    .select('*');
-
-                if (error || !stores || stores.length === 0) return;
-
-                const storesContainer = document.getElementById('storesContainer');
-                
-                stores.forEach(store => {
-                    if (store.slug === 'perriallenstore') return;
-
-                    const storeCard = `
-                        <a href="store.html?slug=${store.slug}" class="min-w-[260px] sm:min-w-[280px] bg-white rounded-custom p-4 border border-gray-200/80 hover:shadow-md transition-all group cursor-pointer flex-shrink-0">
-                            <div class="flex items-center gap-3">
-                                <img src="${store.logo_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=100&auto=format&fit=crop&q=80'}" alt="${store.name}" class="w-14 h-14 rounded-custom object-cover border border-gray-100 group-hover:scale-105 transition-transform">
-                                <div>
-                                    <h3 class="font-bold text-gray-800 text-sm group-hover:text-forest transition-colors">${store.name}</h3>
-                                    <p class="text-xs text-gray-500">${store.location || 'Local Merchant'}</p>
-                                    <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-bold">
-                                        <i class="fa-solid fa-star"></i> 4.9 <span class="text-gray-400 font-normal">(Verified)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    `;
-                    storesContainer.insertAdjacentHTML('beforeend', storeCard);
-                });
-            } catch (err) {
-                console.error('Error fetching dynamic stores:', err);
+        /* --- Hero Controls & Chips Logic --- */
+        function toggleHeroChip(btn) {
+            btn.classList.toggle('active');
+            if(btn.classList.contains('active')) {
+                btn.className = 'hero-chip active text-xs bg-yellowAccent/20 text-yellowAccent border border-yellowAccent/40 hover:bg-yellowAccent/30 px-3 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 shrink-0';
+            } else {
+                btn.className = 'hero-chip text-xs bg-emerald-900/60 text-emerald-200/80 border border-emerald-700/50 hover:bg-emerald-800/60 px-3 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 shrink-0';
             }
         }
 
+        function quickHeroAsk(text) {
+            document.getElementById('heroPromptInput').value = text;
+            submitHeroChat();
+        }
+
+        function submitHeroChat() {
+            const input = document.getElementById('heroPromptInput');
+            const val = input.value.trim();
+            if (!val) return;
+
+            openChatModal();
+            appendUserMessage(val);
+            input.value = '';
+
+            simulateAiResponse(val);
+        }
+
+        function sendModalMessage() {
+            const input = document.getElementById('modalPromptInput');
+            const val = input.value.trim();
+            if (!val) return;
+
+            appendUserMessage(val);
+            input.value = '';
+            simulateAiResponse(val);
+        }
+
+        /* --- Modal Chat Window Control --- */
+        function openChatModal() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100');
+        }
+
+        function closeChatModal() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.add('opacity-0', 'invisible');
+            modal.classList.remove('opacity-100');
+        }
+
+        function appendUserMessage(text) {
+            const container = document.getElementById('modalChatStream');
+            const msgHtml = `
+                <div class="flex items-start justify-end gap-3">
+                    <div class="bg-yellowAccent text-forest font-medium p-4 rounded-2xl rounded-tr-xs text-sm max-w-xl shadow-md">
+                        ${escapeHtml(text)}
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', msgHtml);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function simulateAiResponse(query) {
+            const container = document.getElementById('modalChatStream');
+            const loadingId = 'loading-' + Date.now();
+
+            const loadingHtml = `
+                <div id="${loadingId}" class="flex items-start gap-3 max-w-2xl">
+                    <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
+                        AI
+                    </div>
+                    <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm text-emerald-200 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-notch fa-spin text-yellowAccent"></i>
+                        <span>Searching local stock and analyzing apparel...</span>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', loadingHtml);
+            container.scrollTop = container.scrollHeight;
+
+            setTimeout(() => {
+                const loader = document.getElementById(loadingId);
+                if (loader) loader.remove();
+
+                const responseText = `I searched local boutiques in your region for "<strong>${escapeHtml(query)}</strong>". Here are top apparel options found:`;
+                
+                const aiHtml = `
+                    <div class="flex items-start gap-3 max-w-2xl">
+                        <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
+                            AI
+                        </div>
+                        <div class="space-y-3">
+                            <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm leading-relaxed text-emerald-50">
+                                ${responseText}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', aiHtml);
+                container.scrollTop = container.scrollHeight;
+
+                const keywords = query.toLowerCase().split(' ').filter(w => w.length > 2);
+                filterProductsUI(keywords, query);
+            }, 1200);
+        }
+
+        function triggerHeroVoice() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Voice search is not supported in this browser.');
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.onresult = (e) => {
+                document.getElementById('heroPromptInput').value = e.results[0][0].transcript;
+                submitHeroChat();
+            };
+            recognition.start();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        /* --- Supabase Products Handling --- */
         async function fetchProducts() {
             const grid = document.getElementById('productsGrid');
             document.getElementById('productsHeading').innerText = "Trending Clothes Now";
@@ -843,10 +642,8 @@
                     renderFallbackProducts();
                     return;
                 }
-
                 renderProductCards(products);
             } catch (err) {
-                console.error('Error loading Supabase products:', err);
                 renderFallbackProducts();
             }
         }
@@ -856,9 +653,8 @@
             if (!products || products.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 text-gray-400 font-medium">
-                        <i class="fa-solid fa-magnifying-glass-minus text-3xl mb-2 text-gray-300"></i>
-                        <p class="text-sm font-semibold text-gray-600">No matching clothes found right now.</p>
-                        <button onclick="fetchProducts()" class="mt-3 text-xs bg-forest text-yellowAccent font-bold px-4 py-2 rounded-xl">View All Clothes</button>
+                        <p class="text-sm font-semibold text-gray-600">No matching items found.</p>
+                        <button onclick="fetchProducts()" class="mt-3 text-xs bg-forest text-yellowAccent font-bold px-4 py-2 rounded-xl">View All</button>
                     </div>
                 `;
                 return;
@@ -878,9 +674,7 @@
                             <p class="text-xs text-gray-400 mt-0.5">${product.location || 'In Stock'}</p>
                         </div>
                         <div class="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <div>
-                                <span class="text-sm sm:text-base font-extrabold text-forest">${Number(product.price).toLocaleString()} LKR</span>
-                            </div>
+                            <span class="text-sm sm:text-base font-extrabold text-forest">${Number(product.price).toLocaleString()} LKR</span>
                             <button class="bg-forest hover:bg-forest-light text-yellowAccent font-bold text-xs px-3 py-2 rounded-custom transition-all flex items-center gap-1 active:scale-95">
                                 <span>Pick It</span>
                             </button>
@@ -900,153 +694,13 @@
             renderProductCards(sampleProducts);
         }
 
-        /* ---------------------------------------------------- */
-        /*       CHATGPT STYLE INTERACTIVE CHAT ENGINE          */
-        /* ---------------------------------------------------- */
-        async function sendChatMessage(inputId = 'chatInput') {
-            const inputElem = document.getElementById(inputId);
-            const userText = inputElem.value.trim();
-
-            if (!userText) return;
-
-            const chatMessages = document.getElementById('chatMessages');
-
-            // 1. Add User Message (Right Side Bubble)
-            const userBubble = `
-                <div class="flex items-start justify-end gap-2 max-w-[85%] ml-auto">
-                    <div class="bg-forest text-white p-3 rounded-2xl rounded-tr-none shadow-xs text-xs sm:text-sm font-medium leading-relaxed">
-                        ${escapeHtml(userText)}
-                    </div>
-                </div>
-            `;
-            chatMessages.insertAdjacentHTML('beforeend', userBubble);
-            inputElem.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // 2. Add Typing Indicator (Left Side Bubble)
-            const loadingId = 'loading-' + Date.now();
-            const botLoadingBubble = `
-                <div id="${loadingId}" class="flex items-start gap-2.5 max-w-[85%]">
-                    <div class="w-7 h-7 rounded-full bg-forest text-yellowAccent flex items-center justify-center shrink-0 text-xs font-bold shadow-sm">
-                        <i class="fa-solid fa-robot"></i>
-                    </div>
-                    <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-gray-200/80 shadow-xs text-xs text-gray-500 font-semibold flex items-center gap-2">
-                        <i class="fa-solid fa-spinner fa-spin text-forest"></i> Pixbly AI is thinking...
-                    </div>
-                </div>
-            `;
-            chatMessages.insertAdjacentHTML('beforeend', botLoadingBubble);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                // Fetch Supabase inventory for Context
-                let contextProducts = [];
-                if (supabaseClient) {
-                    const { data } = await supabaseClient.from('products').select('*');
-                    contextProducts = data || [];
-                }
-
-                const prompt = `
-                You are Pixbly AI, a helpful and friendly local fashion shopping agent in Sri Lanka.
-                Answer the user query naturally like a human fashion expert/assistant in short friendly paragraphs. You can respond in English or Singlish/Sinhala if user speaks in Sinhala.
-                User Question: "${userText}"
-                Available Products Data in DB (JSON): ${JSON.stringify(contextProducts)}
-
-                IMPORTANT: Output strictly in JSON format as follows:
-                {
-                    "agent_reply": "Your helpful response text here.",
-                    "matched_keywords": ["keyword1", "keyword2"]
-                }
-                `;
-
-                const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AQ.Ab8RN6KiQOt_fVqw-eKUlKfep8aqmsKUqtVM6Tfpg8eSNWpS1g}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
-                    })
-                });
-
-                const aiData = await aiResponse.json();
-                const rawText = aiData.candidates[0].content.parts[0].text;
-                
-                let parsedResult = {};
-                try {
-                    const cleanedJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-                    parsedResult = JSON.parse(cleanedJson);
-                } catch(e) {
-                    parsedResult = { agent_reply: rawText, matched_keywords: [userText.toLowerCase()] };
-                }
-
-                // Replace Loading with Real AI Reply
-                const botElement = document.getElementById(loadingId);
-                if (botElement) {
-                    botElement.innerHTML = `
-                        <div class="w-7 h-7 rounded-full bg-forest text-yellowAccent flex items-center justify-center shrink-0 text-xs font-bold shadow-sm">
-                            <i class="fa-solid fa-robot"></i>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-gray-200/80 shadow-xs text-xs sm:text-sm text-gray-800 leading-relaxed">
-                            ${escapeHtml(parsedResult.agent_reply || "Here is what I found for you!")}
-                        </div>
-                    `;
-                }
-
-                // Dynamic Filter Products
-                if (parsedResult.matched_keywords && parsedResult.matched_keywords.length > 0) {
-                    filterProductsUI(parsedResult.matched_keywords, userText);
-                }
-
-            } catch (error) {
-                console.error("AI Error:", error);
-                const botElement = document.getElementById(loadingId);
-                if (botElement) {
-                    botElement.innerHTML = `
-                        <div class="w-7 h-7 rounded-full bg-forest text-yellowAccent flex items-center justify-center shrink-0 text-xs font-bold shadow-sm">
-                            <i class="fa-solid fa-robot"></i>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-gray-200/80 shadow-xs text-xs sm:text-sm text-gray-800 leading-relaxed">
-                            Here are the available items matching "${escapeHtml(userText)}"!
-                        </div>
-                    `;
-                }
-                filterProductsUI([userText], userText);
-            }
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function clearChatHistory() {
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.innerHTML = `
-                <div class="flex items-start gap-2.5 max-w-[85%]">
-                    <div class="w-7 h-7 rounded-full bg-forest text-yellowAccent flex items-center justify-center shrink-0 text-xs font-bold shadow-sm">
-                        <i class="fa-solid fa-robot"></i>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-gray-200/80 shadow-xs text-xs sm:text-sm text-gray-800 leading-relaxed">
-                        👋 Hi! මම ඔයාගේ local fashion AI assistant. Sri Lanka වටේ තියෙන clothing stores, clothes search කරන්න හෝ style advice ගන්න මගෙන් ඕනෑම දෙයක් අහන්න!
-                    </div>
-                </div>
-            `;
-            fetchProducts();
-        }
-
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
         async function filterProductsUI(keywords, rawQuery) {
             document.getElementById('productsHeading').innerText = `AI Results for: "${rawQuery}"`;
-            document.getElementById('productsSubHeading').innerText = "Filtered dynamically by Pixbly AI Agent";
+            document.getElementById('productsSubHeading').innerText = "Filtered dynamically by PickBly AI";
 
             if (!supabaseClient) return;
 
             let query = supabaseClient.from('products').select('*');
-
             if (keywords.length > 0) {
                 const keywordFilter = keywords.map(k => `title.ilike.%${k}%,description.ilike.%${k}%`).join(',');
                 query = query.or(keywordFilter);
@@ -1057,74 +711,10 @@
         }
 
         function toggleDrawer() {
-            const drawer = document.getElementById('sideDrawer');
-            drawer.classList.toggle('active');
+            document.getElementById('sideDrawer').classList.toggle('active');
         }
 
-        function setPrompt(text) {
-            document.getElementById('chatInput').value = text;
-            sendChatMessage('chatInput');
-        }
-
-        function applySearch(term) {
-            document.getElementById('desktopSearchInput').value = term;
-            document.getElementById('searchPlaceholder').style.opacity = '0';
-            document.getElementById('searchDropdown').classList.add('hidden');
-            sendChatMessage('desktopSearchInput');
-        }
-
-        document.getElementById('sideDrawer').addEventListener('click', function(e) {
-            if (e.target === this) {
-                toggleDrawer();
-            }
-        });
-
-        const phrases = [
-            "What clothing are you looking for?",
-            "Find local outfits & boutiques.",
-            "Ask Pixbly AI for local style."
-        ];
-        
-        let phraseIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
-        const typewriterElem = document.getElementById('animatedTypewriter');
-        const subtitleElem = document.getElementById('animatedSubtitle');
-
-        function typeEffect() {
-            const currentPhrase = phrases[phraseIndex];
-            
-            if (isDeleting) {
-                typewriterElem.textContent = currentPhrase.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                typewriterElem.textContent = currentPhrase.substring(0, charIndex + 1);
-                charIndex++;
-            }
-
-            let typeSpeed = isDeleting ? 40 : 80;
-
-            if (!isDeleting && charIndex === currentPhrase.length) {
-                typeSpeed = 2200;
-                isDeleting = true;
-                subtitleElem.style.opacity = '1';
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                phraseIndex = (phraseIndex + 1) % phrases.length;
-                typeSpeed = 400;
-                subtitleElem.style.opacity = '0';
-            }
-
-            setTimeout(typeEffect, typeSpeed);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(typeEffect, 500);
-            initBubbles();
-            fetchProducts();
-            fetchStoresFromSupabase();
-        });
-
+        /* --- Canvas Background Particles --- */
         function initBubbles() {
             const canvas = document.getElementById('bubbleCanvas');
             const container = document.getElementById('greenBox');
@@ -1140,92 +730,41 @@
             });
 
             const bubbles = [];
-            const bubbleCount = 22;
-
-            class Bubble {
-                constructor() { this.reset(); }
-                reset() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                    this.radius = Math.random() * 12 + 6;
-                    this.vx = (Math.random() - 0.5) * 1.2;
-                    this.vy = (Math.random() - 0.5) * 1.2;
-                    this.alpha = Math.random() * 0.4 + 0.3;
-                    this.color = Math.random() > 0.4 ? '#FAEA73' : '#34D399';
-                }
-                update(mouse) {
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    if (this.x < 0 || this.x > width) this.vx *= -1;
-                    if (this.y < 0 || this.y > height) this.vy *= -1;
-                }
-                draw() {
-                    ctx.save();
-                    ctx.globalAlpha = this.alpha;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = this.color;
-                    ctx.fill();
-                    ctx.restore();
-                }
+            for (let i = 0; i < 20; i++) {
+                bubbles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 10 + 4,
+                    vx: (Math.random() - 0.5) * 1.1,
+                    vy: (Math.random() - 0.5) * 1.1,
+                    alpha: Math.random() * 0.35 + 0.2,
+                    color: Math.random() > 0.4 ? '#FAEA73' : '#34D399'
+                });
             }
-
-            for (let i = 0; i < bubbleCount; i++) bubbles.push(new Bubble());
 
             function animate() {
                 ctx.clearRect(0, 0, width, height);
-                bubbles.forEach(b => { b.update({x:null,y:null}); b.draw(); });
+                bubbles.forEach(b => {
+                    b.x += b.vx; b.y += b.vy;
+                    if (b.x < 0 || b.x > width) b.vx *= -1;
+                    if (b.y < 0 || b.y > height) b.vy *= -1;
+                    ctx.save();
+                    ctx.globalAlpha = b.alpha;
+                    ctx.beginPath();
+                    ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = b.color;
+                    ctx.fill();
+                    ctx.restore();
+                });
                 requestAnimationFrame(animate);
             }
             animate();
         }
 
-        const searchExamples = [
-            'Red Linen Shirts',
-            'Cotton T-Shirts in Maharagama',
-            'Summer Floral Dresses',
-            'Slim Fit Denim Jeans'
-        ];
-
-        let exampleIndex = 0;
-        const placeholderTextElem = document.getElementById('placeholderText');
-        const placeholderContainer = document.getElementById('searchPlaceholder');
-
-        setInterval(() => {
-            if (placeholderContainer) {
-                placeholderContainer.classList.add('slide-up');
-                setTimeout(() => {
-                    exampleIndex = (exampleIndex + 1) % searchExamples.length;
-                    placeholderTextElem.innerText = searchExamples[exampleIndex];
-                    placeholderContainer.classList.remove('slide-up');
-                }, 350);
-            }
-        }, 3000);
-
-        function toggleVoiceSearch(inputId, btnId) {
-            const inputElem = document.getElementById(inputId);
-            const btnElem = document.getElementById(btnId);
-
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert('Voice search is not supported in this browser.');
-                return;
-            }
-
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-
-            recognition.lang = 'en-US';
-            recognition.onstart = () => btnElem.classList.add('mic-listening');
-            recognition.onresult = (e) => {
-                inputElem.value = e.results[0][0].transcript;
-                btnElem.classList.remove('mic-listening');
-                sendChatMessage(inputId);
-            };
-            recognition.onerror = () => btnElem.classList.remove('mic-listening');
-            recognition.onend = () => btnElem.classList.remove('mic-listening');
-
-            recognition.start();
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            initBubbles();
+            fetchProducts();
+        });
     </script>
 </body>
 </html>
