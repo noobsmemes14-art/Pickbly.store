@@ -532,7 +532,7 @@
 
             appendUserMessage(val);
             input.value = '';
-            simulateAiResponse(val);
+            sendToPickBlyAgent(val);
         }
 
         /* --- Modal Chat Window Control --- */
@@ -561,8 +561,9 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function simulateAiResponse(query) {
+        async function sendToPickBlyAgent(message) {
             const container = document.getElementById('modalChatStream');
+
             const loadingId = 'loading-' + Date.now();
 
             const loadingHtml = `
@@ -570,39 +571,117 @@
                     <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
                         AI
                     </div>
+
                     <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm text-emerald-200 flex items-center gap-2">
                         <i class="fa-solid fa-circle-notch fa-spin text-yellowAccent"></i>
-                        <span>Searching local stock and analyzing apparel...</span>
+                        <span>Checking local fashion stock...</span>
                     </div>
                 </div>
             `;
+
             container.insertAdjacentHTML('beforeend', loadingHtml);
             container.scrollTop = container.scrollHeight;
 
-            setTimeout(() => {
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: pickblyChatHistory,
+                        products: pickblyProducts
+                    })
+                });
+
+                const data = await response.json();
+
                 const loader = document.getElementById(loadingId);
                 if (loader) loader.remove();
 
-                const responseText = `I searched local boutiques in your region for "<strong>${escapeHtml(query)}</strong>". Here are top apparel options found:`;
-                
+                if (!response.ok) {
+                    throw new Error(data.error || 'AI request failed');
+                }
+
+                const reply = data.reply || "Sorry, I couldn't find anything right now.";
+
+                // Save conversation
+                pickblyChatHistory.push({
+                    role: 'user',
+                    text: message
+                });
+
+                pickblyChatHistory.push({
+                    role: 'model',
+                    text: reply
+                });
+
+                // Display AI response
+                const safeReply = escapeHtml(reply).replace(/\n/g, '<br>');
+
                 const aiHtml = `
                     <div class="flex items-start gap-3 max-w-2xl">
                         <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
                             AI
                         </div>
+
                         <div class="space-y-3">
                             <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm leading-relaxed text-emerald-50">
-                                ${responseText}
+                                ${safeReply}
                             </div>
                         </div>
                     </div>
                 `;
+
                 container.insertAdjacentHTML('beforeend', aiHtml);
                 container.scrollTop = container.scrollHeight;
 
-                const keywords = query.toLowerCase().split(' ').filter(w => w.length > 2);
-                filterProductsUI(keywords, query);
-            }, 1200);
+                // Show actual products selected by AI
+                if (Array.isArray(data.productIds) && data.productIds.length > 0) {
+
+                    const matchedProducts = pickblyProducts.filter(product =>
+                        data.productIds.includes(String(product.id))
+                    );
+
+                    if (matchedProducts.length > 0) {
+                        renderProductCards(matchedProducts);
+
+                        document.getElementById('productsHeading').innerText =
+                            'PickBly AI Matches';
+
+                        document.getElementById('productsSubHeading').innerText =
+                            'Real products from local store inventory';
+
+                        document.getElementById('productsSection').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+
+            } catch (error) {
+
+                console.error('PickBly AI error:', error);
+
+                const loader = document.getElementById(loadingId);
+                if (loader) loader.remove();
+
+                const errorHtml = `
+                    <div class="flex items-start gap-3 max-w-2xl">
+                        <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
+                            AI
+                        </div>
+
+                        <div class="bg-red-500/10 border border-red-400/30 p-4 rounded-2xl rounded-tl-xs text-sm text-red-100">
+                            Sorry bro, I'm having trouble connecting right now. Please try again.
+                        </div>
+                    </div>
+                `;
+
+                container.insertAdjacentHTML('beforeend', errorHtml);
+                container.scrollTop = container.scrollHeight;
+            }
         }
 
         function triggerHeroVoice() {
@@ -645,7 +724,8 @@
                     renderFallbackProducts();
                     return;
                 }
-                renderProductCards(products);
+              pickblyProducts = products;
+              renderProductCards(products);
             } catch (err) {
                 renderFallbackProducts();
             }
@@ -689,12 +769,13 @@
 
         function renderFallbackProducts() {
             const sampleProducts = [
-                { title: 'Minimalist Cotton Crewneck T-Shirt', store_name: 'Urban Wear', price: '2450', location: 'Size M • In Stock', image_url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80' },
-                { title: 'Summer Floral Maxi Dress', store_name: 'Vogue Local', price: '4200', location: 'Yellow Floral • Size S/M', image_url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=80' },
-                { title: 'Slim Fit Denim Jeans', store_name: 'Denim Studio', price: '5500', location: 'Classic Blue • Size 32', image_url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=80' },
-                { title: 'Casual Linen Button Shirt', store_name: 'Aura Studio', price: '3800', location: 'Forest Green • Size M', image_url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&auto=format&fit=crop&q=80' }
+                { id: 1, title: 'Minimalist Cotton Crewneck T-Shirt', store_name: 'Urban Wear', price: '2450', location: 'Size M • In Stock', image_url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80' },
+                { id: 2, title: 'Summer Floral Maxi Dress', store_name: 'Vogue Local', price: '4200', location: 'Yellow Floral • Size S/M', image_url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=80' },
+                { id: 3, title: 'Slim Fit Denim Jeans', store_name: 'Denim Studio', price: '5500', location: 'Classic Blue • Size 32', image_url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=80' },
+                { id: 4, title: 'Casual Linen Button Shirt', store_name: 'Aura Studio', price: '3800', location: 'Forest Green • Size M', image_url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&auto=format&fit=crop&q=80' }
             ];
-            renderProductCards(sampleProducts);
+            pickblyProducts = products;
+            renderProductCards(products);
         }
 
         async function filterProductsUI(keywords, rawQuery) {
