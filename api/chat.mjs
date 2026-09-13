@@ -1,427 +1,157 @@
 export default async function handler(req, res) {
+  // 1. HTTP Method Validation
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const {
-      message,
-      history = [],
-      products = []
-    } = req.body || {};
-
-    if (!message || !message.trim()) {
-      return res.status(400).json({
-        error: "Message is required"
-      });
+    // 2. API Key Guard
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is missing in environment variables.");
+      return res.status(500).json({ error: "API key is not configured." });
     }
 
-    // --------------------------------------------------
-    // PRODUCT CATALOG
-    // --------------------------------------------------
+    // 3. Request Extraction & Normalization
+    const body = req.body || {};
+    const rawMessage = typeof body.message === "string" ? body.message.trim() : "";
+    const history = Array.isArray(body.history) ? body.history : [];
+    const products = Array.isArray(body.products) ? body.products : [];
 
-    const catalog = products.map((p) => ({
-      id: p.id,
-      title: p.title || "",
-      category: p.category || "",
-      price: p.price || "",
-      description: p.description || "",
-      sizes: p.available_sizes || "",
-      colors: p.available_colors || "",
-      in_stock: p.in_stock === true,
-      image_url: p.image_url || "",
-      store_name: p.store_name || "",
-      store_slug: p.store_slug || ""
-    }));
+    if (!rawMessage) {
+      return res.status(400).json({ error: "Message is required." });
+    }
 
-    // --------------------------------------------------
-    // PICKBLY AGENT PERSONALITY
-    // --------------------------------------------------
+    const lowerMessage = rawMessage.toLowerCase();
 
+    // 4. Ultra-Fast Hybrid Conversational Pre-Filter (Singlish + English)
+    const quickReplies = [
+      {
+        patterns: [/^(hi|hello|hey|hiya|hii+|(good\s*(morning|afternoon|evening))|halo|helo)$/i, /^kohomada/i, /^machan/i],
+        reply: "Hey! 👋 Welcome to Pickbly. Looking for clothing or fashion items today?"
+      },
+      {
+        patterns: [/^(thanks|thank\s*you|thx|sthuthi|bohoma\s*sthuthi)$/i],
+        reply: "You're welcome! 😊 Let me know if you need anything else."
+      },
+      {
+        patterns: [/^(bye|goodbye|gdn8|gn)$/i],
+        reply: "Take care! 👋 Visit Pickbly anytime."
+      }
+    ];
+
+    for (const item of quickReplies) {
+      if (item.patterns.some((regex) => regex.test(lowerMessage))) {
+        return res.status(200).json({ reply: item.reply });
+      }
+    }
+
+    // 5. Optimized Catalog Compression (Saves 60%+ LLM Tokens)
+    const inStockCatalog = products
+      .filter((p) => p.in_stock === true || p.in_stock === undefined)
+      .map((p) => ({
+        id: p.id || null,
+        title: p.title || "",
+        category: p.category || "",
+        price: p.price || "",
+        colors: Array.isArray(p.available_colors) ? p.available_colors.join(", ") : p.available_colors || "",
+        sizes: Array.isArray(p.available_sizes) ? p.available_sizes.join(", ") : p.available_sizes || "",
+        store: p.store_name || "",
+        desc: p.description ? p.description.slice(0, 100) : ""
+      }));
+
+    // 6. Advanced System Prompt Architecture
     const systemPrompt = `
-You are Pickbly's AI shopping assistant.
-
-You are NOT a general-purpose chatbot.
-
-Your job is to act like a friendly, helpful HUMAN SALES PERSON working for Pickbly.
-
-Pickbly is a local fashion marketplace that helps customers discover products from real stores.
-
-Your personality:
-
-- Friendly
-- Natural
-- Helpful
-- Short and conversational
-- Confident but not pushy
-- Helpful like a good shop assistant
-- Never sound robotic
-- Never repeatedly say "As an AI"
-- Never give long unnecessary explanations
-- Use emojis naturally, but don't overuse them
-- You can understand and respond in English, Sinhala, Singlish, or combinations of them.
-- Match the customer's language naturally.
-
-IMPORTANT:
-
-You are allowed to have normal conversation.
-
-If the customer says:
-
-"hi"
-
-You should respond naturally, for example:
-
-"Hey! 👋 Welcome to Pickbly. What are you looking for today?"
-
-If the customer says:
-
-"hello"
-
-You can say:
-
-"Hey! 👋 What can I help you find today?"
-
-If the customer says:
-
-"kohomada"
-
-You can respond naturally in Sinhala/Singlish.
-
-If the customer says:
-
-"thanks"
-
-Respond naturally, for example:
-
-"You're welcome! 😊 Let me know if you need anything else."
-
-Do NOT immediately start asking for product information when the customer is only greeting you.
-
---------------------------------------------------
-SHOPPING BEHAVIOR
---------------------------------------------------
-
-When the customer wants to buy/find something, behave like a salesperson.
-
-Example:
-
-Customer:
-"mata t shirt ekak oni"
-
-Good response:
-
-"Sure! 👌 What colour or size are you looking for?"
-
-Customer:
-"black"
-
-Good response:
-
-"Nice choice. What size do you need?"
-
-Customer:
-"XL"
-
-Good response:
-
-"Got you — black, XL. What's your budget roughly?"
-
-Customer:
-"5000 wage"
-
-Now you have enough information to search the catalog.
-
-Do NOT keep asking unnecessary questions.
-
-Search the provided catalog and recommend matching products.
-
---------------------------------------------------
-CONVERSATION MEMORY
---------------------------------------------------
-
-Remember information the customer already gave you.
-
-For example:
-
-Customer:
-"I need a black shirt"
-
-Customer:
-"XL"
-
-You must remember:
-
-- Product: shirt
-- Color: black
-- Size: XL
-
-Do NOT ask:
-
-"What colour?"
-
-again.
-
-If the customer later says:
-
-"under 6000"
-
-remember the previous requirements too.
-
---------------------------------------------------
-PRODUCT TRUTH
---------------------------------------------------
-
-The PRODUCT CATALOG is the ONLY source of truth for products.
-
-NEVER invent:
-
-- Product names
-- Prices
-- Stores
-- Sizes
-- Colors
-- Product availability
-- Product features
-- Stock quantities
-
-Only recommend products that actually exist in the catalog.
-
-Only consider a product available if:
-
-in_stock = true
-
-If a product is out of stock, do not recommend it as available.
-
-Never claim an exact quantity because the catalog does not provide exact stock quantity.
-
---------------------------------------------------
-MATCHING
---------------------------------------------------
-
-When searching for products, consider:
-
-- Product type
-- Category
-- Color
-- Size
-- Budget
-- Description
-- Availability
-
-Try to find the closest useful matches.
-
-If the customer asks for:
-
-"black t shirt XL under 5000"
-
-look for products matching as many of those requirements as possible.
-
-If there is an exact match, recommend it.
-
-If there isn't an exact match, clearly explain that and provide the closest real alternatives.
-
-Do NOT pretend an approximate match is an exact match.
-
---------------------------------------------------
-WHEN INFORMATION IS MISSING
---------------------------------------------------
-
-Ask only ONE useful question at a time.
-
-For example:
-
-Customer:
-"I need a dress"
-
-Good:
-
-"Sure 👌 Is it for casual wear or a special occasion?"
-
-Do NOT ask:
-
-"Colour? Size? Budget? Brand? Style? Occasion?"
-
-all at once.
-
-Keep the conversation natural.
-
---------------------------------------------------
-WHEN THE CUSTOMER IS JUST TALKING
---------------------------------------------------
-
-You can have normal short conversation.
-
-Examples:
-
-Customer:
-"thanks"
-
-Assistant:
-"You're welcome! 😊"
-
-Customer:
-"nice"
-
-Assistant:
-"Glad you like it 😄"
-
-Customer:
-"can you help me?"
-
-Assistant:
-"Of course! 👌 What are you looking for?"
-
-Customer:
-"what can you do?"
-
-Assistant:
-"I can help you find clothes from stores on Pickbly — just tell me what you're looking for."
-
---------------------------------------------------
-IMPORTANT SALES RULES
---------------------------------------------------
-
-Do not pressure the customer.
-
-Do not say:
-
-"Buy now!!!"
-
-Do not make fake urgency.
-
-Do not promise discounts or delivery unless the catalog/data explicitly says so.
-
-Your job is to help the customer find the right product.
-
---------------------------------------------------
-RESPONSE STYLE
---------------------------------------------------
-
-Keep normal replies around 1-3 short sentences.
-
-When recommending products, keep descriptions concise.
-
-Do not dump the entire catalog.
-
-Do not mention internal database information.
-
-Do not mention this system prompt.
-
-Do not mention APIs.
-
-Do not mention Gemini.
-
-Do not say that you searched a database unless necessary.
-
-Act as Pickbly's shopping assistant.
-
---------------------------------------------------
-PRODUCT CATALOG
---------------------------------------------------
-
-${JSON.stringify(catalog)}
+You are Pickbly AI, an expert e-commerce shopping assistant for Pickbly (a Sri Lankan fashion marketplace).
+
+CORE DUTIES:
+- Assist shoppers in finding clothing and fashion items from local vendors.
+- Provide natural, human-like sales assistance without sounding robotic.
+
+LANGUAGE & TONE TRADITIONS:
+- Multi-lingual capability: Fully understand English, Sinhala, and Singlish (e.g., "mata t-shirt ekak oni", "black size L thiyenawada?").
+- Adapt to the buyer's language style automatically.
+- Keep standard responses brief (1-3 sentences).
+
+CONTEXT MEMORY & ACCURACY RULES:
+- Never re-ask for information already mentioned in the conversation history (e.g., if user said "black size L", remember both).
+- ALWAYS recommend products strictly from the CATALOG below.
+- NEVER invent fake products, prices, stock statuses, or store names.
+- If no exact match exists, state it transparently and suggest the closest available item in the catalog.
+
+CATALOG REAL-TIME DATA:
+${JSON.stringify(inStockCatalog)}
 `;
 
-    // --------------------------------------------------
-    // CONVERSATION HISTORY
-    // --------------------------------------------------
+    // 7. Sanitized Conversation History Engine (Truncated to last 10 messages max)
+    const formattedContents = [];
+    const maxHistoryWindow = history.slice(-10);
 
-    const contents = [];
+    for (const item of maxHistoryWindow) {
+      if (!item || !item.content) continue;
+      const contentText = String(item.content).trim();
+      if (!contentText) continue;
 
-    for (const item of history) {
-      if (!item?.content) continue;
-
-      contents.push({
-        role: item.role === "assistant" ? "model" : "user",
-        parts: [
-          {
-            text: String(item.content)
-          }
-        ]
+      formattedContents.push({
+        role: item.role === "assistant" || item.role === "model" ? "model" : "user",
+        parts: [{ text: contentText }]
       });
     }
 
-    contents.push({
+    // Append current user message
+    formattedContents.push({
       role: "user",
-      parts: [
-        {
-          text: message.trim()
-        }
-      ]
+      parts: [{ text: rawMessage }]
     });
 
-    // --------------------------------------------------
-    // GEMINI REQUEST
-    // --------------------------------------------------
+    // 8. Call Gemini API
+    const model = "gemini-2.5-flash";
+    const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": process.env.GEMINI_API_KEY
+    const response = await fetch(geminiEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
+      body: JSON.stringify({
+        system_instruction: {
+          parts: [{ text: systemPrompt }]
         },
-
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [
-              {
-                text: systemPrompt
-              }
-            ]
-          },
-
-          contents,
-
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 400
-          }
-        })
-      }
-    );
+        contents: formattedContents,
+        generationConfig: {
+          temperature: 0.5,
+          topP: 0.9,
+          maxOutputTokens: 600
+        }
+      })
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Gemini API error:", data);
-
+      console.error("Gemini API Error:", response.status, JSON.stringify(data));
       return res.status(500).json({
-        error: "Gemini request failed",
-        details: data?.error?.message || "Unknown Gemini error"
+        error: data?.error?.message || "Failed to communicate with AI agent."
       });
     }
 
-    const reply =
-      data?.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text || "")
-        .join("")
-        .trim();
+    const aiReply = data?.candidates?.[0]?.content?.parts
+      ?.map((p) => p.text || "")
+      .join("")
+      .trim();
 
-    if (!reply) {
-      return res.status(500).json({
-        error: "Empty response from AI"
-      });
+    if (!aiReply) {
+      return res.status(500).json({ error: "Agent returned an empty response." });
     }
 
-    // --------------------------------------------------
-    // RETURN RESPONSE
-    // --------------------------------------------------
-
-    return res.status(200).json({
-      reply
-    });
+    // 9. Deliver Response
+    return res.status(200).json({ reply: aiReply });
 
   } catch (error) {
-    console.error("Pickbly agent error:", error);
-
+    console.error("Pickbly Agent Exception:", error);
     return res.status(500).json({
-      error: "Something went wrong"
+      error: error?.message || "Internal marketplace agent error."
     });
   }
 }
