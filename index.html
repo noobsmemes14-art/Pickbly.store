@@ -561,8 +561,13 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        let pickblyAgentBusy = false;
+
         async function sendToPickBlyAgent(message) {
             const container = document.getElementById('modalChatStream');
+
+            if (pickblyAgentBusy) return;
+            pickblyAgentBusy = true;
 
             const loadingId = 'loading-' + Date.now();
 
@@ -609,12 +614,12 @@
                 // Save conversation
                 pickblyChatHistory.push({
                     role: 'user',
-                    text: message
+                    content: message
                 });
 
                 pickblyChatHistory.push({
-                    role: 'model',
-                    text: reply
+                    role: 'assistant',
+                    content: reply
                 });
 
                 // Display AI response
@@ -681,6 +686,8 @@
 
                 container.insertAdjacentHTML('beforeend', errorHtml);
                 container.scrollTop = container.scrollHeight;
+            } finally {
+                pickblyAgentBusy = false;
             }
         }
 
@@ -731,6 +738,10 @@
             }
         }
 
+        function escapeAttr(text) {
+            return escapeHtml(String(text ?? '')).replace(/"/g, '&quot;');
+        }
+
         function renderProductCards(products) {
             const grid = document.getElementById('productsGrid');
             if (!products || products.length === 0) {
@@ -746,15 +757,15 @@
             grid.innerHTML = products.map(product => `
                 <div class="bg-white rounded-custom overflow-hidden border border-gray-200/80 hover:shadow-lg transition-all flex flex-col group">
                     <div class="relative aspect-square overflow-hidden bg-gray-100">
-                        <img src="${product.image_url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80'}" alt="${product.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <img src="${escapeAttr(product.image_url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80')}" alt="${escapeAttr(product.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         <span class="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-forest text-[10px] font-bold px-2 py-1 rounded-md border border-gray-200">
-                            ${product.store_name || 'Local Store'}
+                            ${escapeHtml(product.store_name || 'Local Store')}
                         </span>
                     </div>
                     <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between space-y-2">
                         <div>
-                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">${product.title}</h3>
-                            <p class="text-xs text-gray-400 mt-0.5">${product.location || 'In Stock'}</p>
+                            <h3 class="font-bold text-gray-800 text-xs sm:text-sm line-clamp-1 group-hover:text-forest">${escapeHtml(product.title)}</h3>
+                            <p class="text-xs text-gray-400 mt-0.5">${escapeHtml(product.location || 'In Stock')}</p>
                         </div>
                         <div class="flex items-center justify-between pt-2 border-t border-gray-50">
                             <span class="text-sm sm:text-base font-extrabold text-forest">${Number(product.price).toLocaleString()} LKR</span>
@@ -774,8 +785,8 @@
                 { id: 3, title: 'Slim Fit Denim Jeans', store_name: 'Denim Studio', price: '5500', location: 'Classic Blue • Size 32', image_url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop&q=80' },
                 { id: 4, title: 'Casual Linen Button Shirt', store_name: 'Aura Studio', price: '3800', location: 'Forest Green • Size M', image_url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&auto=format&fit=crop&q=80' }
             ];
-            pickblyProducts = products;
-            renderProductCards(products);
+            pickblyProducts = sampleProducts;
+            renderProductCards(sampleProducts);
         }
 
         async function filterProductsUI(keywords, rawQuery) {
