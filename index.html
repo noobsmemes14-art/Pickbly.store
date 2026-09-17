@@ -497,6 +497,7 @@
 
         let pickblyChatHistory = [];
         let pickblyProducts = [];
+        let pickblyInteractionId = null;
 
         /* --- Hero Controls & Chips Logic --- */
         function toggleHeroChip(btn) {
@@ -564,130 +565,239 @@
         let pickblyAgentBusy = false;
 
         async function sendToPickBlyAgent(message) {
-            const container = document.getElementById('modalChatStream');
 
-            if (pickblyAgentBusy) return;
-            pickblyAgentBusy = true;
+            const container = document.getElementById('modalChatStream');
 
             const loadingId = 'loading-' + Date.now();
 
             const loadingHtml = `
                 <div id="${loadingId}" class="flex items-start gap-3 max-w-2xl">
+
                     <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
                         AI
                     </div>
 
                     <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm text-emerald-200 flex items-center gap-2">
+
                         <i class="fa-solid fa-circle-notch fa-spin text-yellowAccent"></i>
-                        <span>Checking local fashion stock...</span>
+
+                        <span>Thinking...</span>
+
                     </div>
+
                 </div>
             `;
 
-            container.insertAdjacentHTML('beforeend', loadingHtml);
-            container.scrollTop = container.scrollHeight;
+            container.insertAdjacentHTML(
+                'beforeend',
+                loadingHtml
+            );
+
+            container.scrollTop =
+                container.scrollHeight;
+
 
             try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        history: pickblyChatHistory,
-                        products: pickblyProducts
-                    })
-                });
 
-                const data = await response.json();
+                // ============================================
+                // SEND MESSAGE TO PICKBLY AGENT
+                // ============================================
 
-                const loader = document.getElementById(loadingId);
-                if (loader) loader.remove();
+                const response = await fetch(
+                    '/api/agent',
+                    {
+                        method: 'POST',
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'AI request failed');
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+
+                        body: JSON.stringify({
+
+                            message: message,
+
+                            interactionId:
+                                pickblyInteractionId
+
+                        })
+                    }
+                );
+
+
+                // ============================================
+                // READ SERVER RESPONSE
+                // ============================================
+
+                const data =
+                    await response.json();
+
+
+                // Remove loading message
+
+                const loader =
+                    document.getElementById(loadingId);
+
+                if (loader) {
+                    loader.remove();
                 }
 
-                const reply = data.reply || "Sorry, I couldn't find anything right now.";
 
-                // Save conversation
+                // ============================================
+                // CHECK FOR ERROR
+                // ============================================
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        'Pickbly agent failed'
+                    );
+
+                }
+
+
+                // ============================================
+                // SAVE GEMINI INTERACTION ID
+                // ============================================
+
+                if (data.interactionId) {
+
+                    pickblyInteractionId =
+                        data.interactionId;
+
+                }
+
+
+                // ============================================
+                // GET AI RESPONSE
+                // ============================================
+
+                const reply =
+                    data.reply ||
+                    "Sorry, I couldn't find anything right now.";
+
+
+                // ============================================
+                // SAVE LOCAL DISPLAY HISTORY
+                // ============================================
+
                 pickblyChatHistory.push({
+
                     role: 'user',
+
                     content: message
+
                 });
+
 
                 pickblyChatHistory.push({
+
                     role: 'assistant',
+
                     content: reply
+
                 });
 
-                // Display AI response
-                const safeReply = escapeHtml(reply).replace(/\n/g, '<br>');
+
+                // ============================================
+                // DISPLAY AI RESPONSE
+                // ============================================
+
+                const safeReply =
+                    escapeHtml(reply)
+                        .replace(/\n/g, '<br>');
+
 
                 const aiHtml = `
+
                     <div class="flex items-start gap-3 max-w-2xl">
+
                         <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
                             AI
                         </div>
 
+
                         <div class="space-y-3">
+
                             <div class="bg-forest-light/40 border border-forest-light/60 p-4 rounded-2xl rounded-tl-xs text-sm leading-relaxed text-emerald-50">
+
                                 ${safeReply}
+
                             </div>
+
                         </div>
+
                     </div>
+
                 `;
 
-                container.insertAdjacentHTML('beforeend', aiHtml);
-                container.scrollTop = container.scrollHeight;
 
-                // Show actual products selected by AI
-                if (Array.isArray(data.productIds) && data.productIds.length > 0) {
+                container.insertAdjacentHTML(
+                    'beforeend',
+                    aiHtml
+                );
 
-                    const matchedProducts = pickblyProducts.filter(product =>
-                        data.productIds.includes(String(product.id))
-                    );
 
-                    if (matchedProducts.length > 0) {
-                        renderProductCards(matchedProducts);
+                container.scrollTop =
+                    container.scrollHeight;
 
-                        document.getElementById('productsHeading').innerText =
-                            'PickBly AI Matches';
-
-                        document.getElementById('productsSubHeading').innerText =
-                            'Real products from local store inventory';
-
-                        document.getElementById('productsSection').scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }
 
             } catch (error) {
 
-                console.error('PickBly AI error:', error);
+                console.error(
+                    'PickBly Agent Error:',
+                    error
+                );
 
-                const loader = document.getElementById(loadingId);
-                if (loader) loader.remove();
+
+                // Remove loading message
+
+                const loader =
+                    document.getElementById(loadingId);
+
+                if (loader) {
+                    loader.remove();
+                }
+
+
+                // Show ACTUAL error
+
+                const errorMessage =
+                    escapeHtml(
+                        error.message ||
+                        'Unknown agent error'
+                    );
+
 
                 const errorHtml = `
+
                     <div class="flex items-start gap-3 max-w-2xl">
+
                         <div class="w-8 h-8 rounded-full bg-yellowAccent text-forest flex items-center justify-center shrink-0 font-bold text-xs mt-1">
                             AI
                         </div>
 
+
                         <div class="bg-red-500/10 border border-red-400/30 p-4 rounded-2xl rounded-tl-xs text-sm text-red-100">
-                            Sorry bro, I'm having trouble connecting right now. Please try again.
+
+                            Agent error:
+                            ${errorMessage}
+
                         </div>
+
                     </div>
+
                 `;
 
-                container.insertAdjacentHTML('beforeend', errorHtml);
-                container.scrollTop = container.scrollHeight;
-            } finally {
-                pickblyAgentBusy = false;
+
+                container.insertAdjacentHTML(
+                    'beforeend',
+                    errorHtml
+                );
+
+
+                container.scrollTop =
+                    container.scrollHeight;
             }
         }
 
